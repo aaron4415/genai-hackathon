@@ -59,13 +59,13 @@ const translations = {
 };
 function stored(){try{return JSON.parse(localStorage.getItem('across-demo-v1')) || {}}catch{return {}}}
 const savedData=stored();
-const state={view:'discover',workspace:'candidate',city:'both',query:'',discipline:'all',mode:'all',sort:'recent',expanded:false,lang:['en','zh','tw'].includes(savedData.lang)?savedData.lang:'en',saved:Array.isArray(savedData.saved)?savedData.saved.filter(id=>jobs.some(j=>j.id===id)):[],applications:Array.isArray(savedData.applications)?savedData.applications.filter(x=>jobs.some(j=>j.id===x.jobId)).slice(0,100):[],profile:{name:'Alex Chen',headline:'Product designer · Shenzhen',email:'alex.chen@example.com',destination:'Hong Kong',status:'Not sure yet',stage:'Exploring',expiry:'',sponsorship:'Not sure',qualification:'',...savedData.profile},vacancies:Array.isArray(savedData.vacancies)?savedData.vacancies.slice(0,50):[]};
+const state={view:'discover',workspace:'candidate',city:'both',query:'',discipline:'all',mode:'all',sort:'recent',expanded:false,lang:['en','zh','tw'].includes(savedData.lang)?savedData.lang:'en',saved:Array.isArray(savedData.saved)?savedData.saved.filter(id=>jobs.some(j=>j.id===id)):[],applications:Array.isArray(savedData.applications)?savedData.applications.filter(x=>jobs.some(j=>j.id===x.jobId)).slice(0,100):[],profile:{name:'Alex Chen',headline:'Product designer · Shenzhen',email:'alex.chen@example.com',destination:'Hong Kong',status:'Not sure yet',stage:'Exploring',expiry:'',sponsorship:'Not sure',qualification:'',...savedData.profile},vacancies:Array.isArray(savedData.vacancies)?savedData.vacancies.slice(0,50):[],marketingEdits:(savedData.marketingEdits&&typeof savedData.marketingEdits==='object'&&!Array.isArray(savedData.marketingEdits))?savedData.marketingEdits:{},applyTarget:null,applySuccess:null,applyAgentUsed:false,agentRunning:false,agentStep:null,agentCompletedSteps:[]};
 let toastTimer;
 const t=k=>translations[state.lang][k] || translations.en[k] || k;
 const title=j=>state.lang==='en'?j.title:state.lang==='zh'?j.zh:j.tw;
 const city=c=>c==='Hong Kong'?t('hk'):c==='Shenzhen'?t('sz'):c;
 const profilePercent=()=>Math.round([state.profile.name,state.profile.headline,state.profile.email,state.profile.status!=='Not sure yet',state.profile.qualification].filter(Boolean).length/5*100);
-function persist(){try{localStorage.setItem('across-demo-v1',JSON.stringify({saved:state.saved,applications:state.applications,profile:state.profile,lang:state.lang,vacancies:state.vacancies}));return true}catch{toast('Browser storage is unavailable. Changes last for this visit only.');return false}}
+function persist(){try{localStorage.setItem('across-demo-v1',JSON.stringify({saved:state.saved,applications:state.applications,profile:state.profile,lang:state.lang,vacancies:state.vacancies,marketingEdits:state.marketingEdits}));return true}catch{toast('Browser storage is unavailable. Changes last for this visit only.');return false}}
 function toast(message){const el=document.querySelector('#toast');el.textContent=message;el.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),3500)}
 function logo(j,large=false){return `<span class="company-logo ${large?'large':''}" style="--logo-bg:${j.bg};--logo-ink:${j.ink}" aria-hidden="true">${j.initial}</span>`}
 function navItem(view,label,i,extra=''){return `<button class="nav-item ${state.view===view?'active':''}" data-view="${view}" ${state.view===view?'aria-current="page"':''}>${icon(i)}<span>${label}</span>${extra}</button>`}
@@ -86,7 +86,7 @@ function banner(){return `<section class="bottom-banner"><span class="banner-ico
 function discover(){return `<div class="welcome-row"><span>${t('greeting')} <strong>${esc(state.profile.name.split(' ')[0])}.</strong> ${t('welcome')}</span><span class="date">${icon('globe')} HONG KONG ↔ SHENZHEN</span></div><section class="hero"><div class="hero-copy"><div class="eyebrow"><span class="live-dot"></span> TWO CITIES. ENDLESS POSSIBILITIES.</div><h1>${t('hero')}<br><em>${t('hero2')}</em></h1><p>${t('subtitle')}</p></div>${skyline()}</section>${search()}<div class="discovery"><section aria-label="Job opportunities"><div class="section-heading"><div><h2>${t('recommended')}</h2><p>${t('recommendedSub')}</p></div><button class="text-btn" data-action="all-jobs">${t('all')}${icon('arrow')}</button></div>${filters()}${jobsList()}</section>${rightColumn()}</div>${banner()}`}
 function heading(eyebrow,name,body,action=''){return `<div class="page-heading"><div><div class="eyebrow">${eyebrow}</div><h1>${name}</h1><p>${body}</p></div>${action}</div>`}
 function savedPage(){return `${heading('YOUR SHORTLIST',t('saved'),t('savedSub'))}${search()}<div style="margin-top:25px">${filters()}${jobsList()}</div>`}
-function applicationsPage(){return `${heading('YOUR NEXT STEPS',t('applications'),'A little intention behind every opportunity. Demo applications stay in this browser.')}<div class="notice" style="margin:0 0 22px">${icon('shield')} This is a demonstration. No application is sent to an employer or external platform.</div>${state.applications.length?state.applications.map(a=>{const j=jobs.find(x=>x.id===a.jobId);return `<article class="application-card">${logo(j)}<div><button class="job-title" data-job="${j.id}"><h3>${esc(title(j))}</h3></button><p>${j.company} · ${city(j.city)} · ${esc(a.date)}</p></div><span class="status-badge">Demo application saved</span></article>`}).join(''):empty('Your next step starts here','Explore a role and try the demo application flow.',`<button class="btn btn-primary" data-view="discover">${t('discover')}${icon('arrow')}</button>`)}`}
+function applicationsPage(){return `${heading('YOUR NEXT STEPS',t('applications'),'A little intention behind every opportunity. Demo applications stay in this browser.')}<div class="notice" style="margin:0 0 22px">${icon('shield')} This is a demonstration. No application is sent to an employer or external platform.</div>${state.applications.length?state.applications.map(a=>{const j=jobs.find(x=>x.id===a.jobId);return `<article class="application-card">${logo(j)}<div><button class="job-title" data-job="${j.id}"><h3>${esc(title(j))}</h3></button><p>${j.company} · ${city(j.city)} · ${esc(a.date)}</p></div><div class="application-card-tail">${a.agent?`<span class="status-badge mint">${icon('route')}Assisted by AI agent</span>`:`<span class="status-badge">Demo application saved</span>`}<button class="text-btn" data-job="${j.id}">Reopen ${icon('arrow')}</button></div></article>`}).join(''):empty('Your next step starts here','Explore a role and try the demo application flow.',`<button class="btn btn-primary" data-view="discover">${t('discover')}${icon('arrow')}</button>`)}`}
 function options(arr,selected){return arr.map(x=>`<option ${x===selected?'selected':''} value="${esc(x)}">${esc(x)}</option>`).join('')}
 function profilePage(){const p=state.profile;return `${heading('YOUR STORY, CLEARLY TOLD',t('profile'),t('profileSub'))}<div class="wide-layout"><form id="profile-form"><section class="panel"><h2>The essentials</h2><p>Start with a few details. This demo uses a fictional profile.</p><div class="form-grid"><label class="field">Display name<input name="name" required maxlength="80" value="${esc(p.name)}" autocomplete="name"></label><label class="field">Email<input type="email" name="email" required maxlength="150" value="${esc(p.email)}" autocomplete="email"></label><label class="field full-width">Professional headline<input name="headline" required maxlength="160" value="${esc(p.headline)}"></label><label class="field">Where would you like to work?<select name="destination" id="destination">${options(['Hong Kong','Shenzhen','Both cities'],p.destination)}</select></label><label class="field">Qualifications & professional certificates<input name="qualification" maxlength="300" value="${esc(p.qualification)}" placeholder="e.g. BSc Computer Science, AWS certification"><small>Self-reported. A professional certificate is separate from work authorisation.</small></label></div></section><section class="panel" id="work-status-panel">${workStatusFields(p.destination)}</section><div class="form-actions"><button class="btn btn-primary" type="submit">${t('saveProfile')}${icon('check')}</button></div><p class="language-note">Profile forms and official-source summaries are shown in English in this demo. Job titles and core discovery navigation support three languages.</p></form><aside class="profile-sidebar">${profilePanel()}<section class="panel" style="margin-top:20px"><span class="feature-icon" style="display:inline-flex">${icon('globe')}</span><h3 style="margin-top:22px">A profile that travels with you.</h3><p style="margin-top:10px">A multilingual profile for headhunters is on the roadmap. You control what is shared.</p><button class="text-btn" data-feature="profile" style="margin-top:15px">Explore the concept ${icon('arrow')}</button></section></aside></div>`}
 function workStatusFields(destination){const p=state.profile;return `<h2>Work status & practical arrangements</h2><p>Help your future conversations start with the right questions.</p>${destination!=='Shenzhen'?`<div class="form-grid"><label class="field">Hong Kong admission / residence status<select name="status">${options(['Not sure yet','HK permanent resident / right to land','IANG','TTPS','ASMTP','QMAS','TechTAS','Dependant permission','Other permission','No current permission'],p.status)}</select><small>Choose your actual status, rather than a pathway you might qualify for.</small></label><label class="field">Current stage<select name="stage">${options(['Exploring','Application pending','Permission granted'],p.stage)}</select></label><label class="field">Permission expiry, if applicable<input name="expiry" type="date" value="${esc(p.expiry)}"><small>Check the conditions and limit of stay on your own permission.</small></label><label class="field">Employer sponsorship / approval support<select name="sponsorship">${options(['Not sure','May need employer support','I believe no support is needed','Prefer to discuss'],p.sponsorship)}</select></label></div><div class="notice"><strong>IANG is an admission arrangement, not a professional certificate.</strong> Other routes include ASMTP and TTPS. Your answers are self-reported and do not establish eligibility or a right to work. <a href="https://www.immd.gov.hk/eng/services/visas/immigration-entry-guideline.html" target="_blank" rel="noopener noreferrer">Check official admission guidance ↗</a></div>`:''}${destination!=='Hong Kong'?`<div class="notice"><strong>Planning to work in Shenzhen?</strong> Hong Kong residents no longer need the former Mainland employment permit. Relevant identity documents and employment procedures still matter, and arrangements can differ for holders of other travel documents. <a href="https://www2.jobs.gov.hk/0/en/information/Mainland/Guide/" target="_blank" rel="noopener noreferrer">Read the Labour Department guide ↗</a></div><div class="form-grid"><label class="field full-width">Mainland work arrangements to clarify<textarea name="mainlandNotes" maxlength="1000" placeholder="Identity documents, employer registration, professional recognition or other questions">${esc(p.mainlandNotes || '')}</textarea><small>Do not enter identity document numbers or upload sensitive documents in this demo.</small></label></div>`:''}<div class="notice" style="background:#f8f6ee;color:#9a936f;border-color:#eeebdc">Guidance is preliminary and was checked against official sources on 17 October 2026. Authorities determine formal eligibility. No documents are verified or uploaded by this prototype.</div>`}
@@ -94,16 +94,423 @@ function toolsPage(){return `${heading('ROOM FOR WHAT COMES NEXT',t('tools'),'Fo
 function resourcesPage(){return `${heading('A LITTLE CLARITY, BEFORE THE LEAP',t('resources'),'Practical starting points for Hong Kong ↔ Shenzhen careers. Go directly to the source.')}<div class="notice" style="margin:0 0 24px">${icon('book')} Official-source summaries · Checked 17 October 2026 · Preliminary information, not an eligibility decision. Your own permission and circumstances determine what applies.</div><div class="resource-grid">${resources.map((r,i)=>`<article class="resource-card"><div class="eyebrow">${i===3?'HONG KONG → MAINLAND':'MAINLAND → HONG KONG'}</div><h2>${r.name}</h2><span class="tag mint">${r.label}</span><p style="margin-top:16px">${r.body}</p><a href="${r.url}" target="_blank" rel="noopener noreferrer">Read the official guidance ${icon('external')}</a></article>`).join('')}</div><section class="panel" style="margin-top:22px"><h2>Bring better questions to the conversation.</h2><ul class="credentials"><li>${icon('document')}<div><strong>Work authorisation and professional qualifications are separate.</strong><small>Ask which permission is held, its current stage and its expiry. Verify role-specific certificates separately.</small></div></li><li>${icon('briefcase')}<div><strong>Compare the whole employment package.</strong><small>Clarify currency, working hours, leave, benefits, work location and any relocation support. This demo does not convert salaries.</small></div></li><li>${icon('people')}<div><strong>Ask about the team's actual working practices.</strong><small>Language, communication style and workplace expectations vary between companies.</small></div></li></ul><button class="btn btn-outline" data-view="profile">Update your work status ${icon('arrow')}</button></section>`}
 function employerPage(postsOnly=false){return `${heading('GREAT TEAMS CROSS BORDERS',postsOnly?'Your job posts':'Find your next great teammate.','A shared workspace for opportunities in Hong Kong and Shenzhen.',`<button class="btn btn-primary" data-action="new-vacancy">${icon('plus')}Create demo job</button>`)}${!postsOnly?`<div class="stats"><section class="stat"><small>DEMO JOB POSTS</small><strong>${2+state.vacancies.length}</strong><p>Across two connected cities</p></section><section class="stat"><small>SAMPLE CANDIDATES</small><strong>03</strong><p>Fictional profiles for demonstration</p></section><section class="stat"><small>MARKETS CONNECTED</small><strong>02</strong><p>Hong Kong ↔ Shenzhen</p></section></div>`:''}<section class="panel"><div class="section-heading"><h2>Your opportunities</h2><span class="tag">Demo company · Forma Studio</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Role</th><th>Location</th><th>Work style</th><th>Status</th><th></th></tr></thead><tbody>${jobs.filter(j=>j.company==='Forma Studio').map(j=>`<tr><td><strong>${j.title}</strong><br><small>Full-time · ${j.salary}</small></td><td>${j.city}</td><td>${j.mode}</td><td><span class="status-badge">Sample listing</span></td><td><button class="text-btn" data-job="${j.id}">Preview ${icon('arrow')}</button></td></tr>`).join('')}${state.vacancies.map(v=>`<tr><td><strong>${esc(v.title)}</strong><br><small>${esc(v.salary)}</small></td><td>${esc(v.city)}</td><td>${esc(v.mode)}</td><td><span class="status-badge amber">Local draft</span></td><td><button class="text-btn" data-draft="${esc(v.id)}">Preview ${icon('arrow')}</button></td></tr>`).join('')}</tbody></table></div></section>${!postsOnly?`<div class="feature-grid" style="margin-top:23px"><section class="panel" style="margin:0"><h2>Tell the right story, in either market.</h2><p>Recruitment content that helps candidates understand your role, expectations and team.</p><button class="text-btn" data-feature="marketing" style="margin-top:19px">Preview employer marketing ${icon('arrow')}</button></section><section class="panel" style="margin:0"><h2>Look beyond a familiar CV.</h2><p>Explore a fictional talent preview. Future matching will explain evidence and information gaps.</p><button class="text-btn" data-view="talent" style="margin-top:19px">Explore talent ${icon('arrow')}</button></section></div>`:''}<div class="notice">All listings and candidates here are fictional. New jobs remain browser-local drafts; nothing is published or sent. Employers on either side can use the same workflow.</div>`}
 function talentPage(){return `${heading('PEOPLE, BEYOND THE KEYWORDS','A fresh perspective on talent.','Fictional candidates exploring Hong Kong and Shenzhen. No ranking or eligibility decisions.')}<div class="feature-grid">${[{name:'Jamie Wong',role:'Frontend Engineer',from:'Hong Kong',to:'Shenzhen',skills:'React · TypeScript · Accessibility',initial:'JW'},{name:'Lin Xu',role:'Product Designer',from:'Shenzhen',to:'Hong Kong',skills:'Figma · Research · Design systems',initial:'LX'},{name:'Sam Lee',role:'Data Analyst',from:'Hong Kong',to:'Both cities',skills:'SQL · Python · Experimentation',initial:'SL'}].map(p=>`<section class="feature-card"><span class="avatar" style="height:48px;width:48px;margin-bottom:19px">${p.initial}</span><h2>${p.name}</h2><p>${p.role}<br>${p.from} → ${p.to}<br>${p.skills}</p><button class="text-btn" data-action="talent-preview">Profile preview ${icon('arrow')}</button></section>`).join('')}</div><div class="notice">Sample profiles are not real people. Multilingual public profiles and headhunter discovery are planned for a later phase.</div>`}
-function render(){const views={discover,saved:savedPage,applications:applicationsPage,profile:profilePage,tools:toolsPage,resources:resourcesPage,employer:()=>employerPage(),vacancies:()=>employerPage(true),talent:talentPage};document.documentElement.lang=state.lang==='zh'?'zh-Hans':state.lang==='tw'?'zh-Hant':'en';document.title=`Across — ${state.view==='employer'?'Employer workspace':t(state.view)}`;document.querySelector('#app').innerHTML=`${sidebar()}<div class="shell">${topbar()}<main id="main" class="content" tabindex="-1">${(views[state.view] || discover)()}${footer()}</main></div>`}
-function navigate(view){const allowed=['discover','saved','applications','profile','tools','resources','employer','vacancies','talent'];if(!allowed.includes(view))view='discover';state.view=view;if(['employer','vacancies','talent'].includes(view))state.workspace='employer';if(['discover','saved','applications','profile'].includes(view))state.workspace='candidate';state.query='';state.city='both';state.discipline='all';state.mode='all';state.expanded=false;history.replaceState(null,'',`#${view}`);render();window.scrollTo({top:0});document.querySelector('#main').focus({preventScroll:true})}
+function render(){const views={discover,saved:savedPage,applications:applicationsPage,profile:profilePage,tools:toolsPage,resources:resourcesPage,employer:()=>employerPage(),vacancies:()=>employerPage(true),talent:talentPage};document.documentElement.lang=state.lang==='zh'?'zh-Hans':state.lang==='tw'?'zh-Hant':'en';const titleView=state.view==='employer'?'Employer workspace':state.view==='apply'?'Apply on company site':t(state.view);document.title=`Across — ${titleView}`;const root=document.querySelector('#app');if(state.view==='apply'&&state.applyTarget){const j=jobs.find(x=>x.id===state.applyTarget);if(j){root.innerHTML=state.applySuccess?applyPortalSuccess(j):applyPortalPage(j);return}state.applyTarget=null}root.innerHTML=`${sidebar()}<div class="shell">${topbar()}<main id="main" class="content" tabindex="-1">${(views[state.view] || discover)()}${footer()}</main></div>`}
+function navigate(view){const allowed=['discover','saved','applications','profile','tools','resources','employer','vacancies','talent','apply'];if(!allowed.includes(view))view='discover';state.view=view;if(['employer','vacancies','talent'].includes(view))state.workspace='employer';if(['discover','saved','applications','profile'].includes(view))state.workspace='candidate';if(view==='apply'){}else{state.query='';state.city='both';state.discipline='all';state.mode='all';state.expanded=false;}history.replaceState(null,'',`#${view}`);render();window.scrollTo({top:0});document.querySelector('#main').focus({preventScroll:true})}
 const modal=document.querySelector('#modal');
+
+// === Employer marketing pipeline =========================================
+const marketingChannels=[
+ {id:'linkedin',icon:'people',limit:1300,name:{en:'LinkedIn · long form',zh:'LinkedIn · 长帖',tw:'LinkedIn · 長帖'},sub:{en:'Professional, structured',zh:'专业、结构化',tw:'專業、結構化'}},
+ {id:'twitter',icon:'globe',limit:280,name:{en:'X / Twitter',zh:'X / Twitter',tw:'X / Twitter'},sub:{en:'Punch + hashtags',zh:'短打 + 话题',tw:'短打 + 話題'}},
+ {id:'xiaohongshu',icon:'bookmark',limit:600,name:{en:'Xiaohongshu card',zh:'小红书图文',tw:'小紅書圖文'},sub:{en:'Lifestyle, emoji-rich',zh:'生活化、带 emoji',tw:'生活化、帶 emoji'}},
+ {id:'wechat',icon:'mail',limit:160,name:{en:'WeChat moment',zh:'微信朋友圈',tw:'微信朋友圈'},sub:{en:'Casual, ~140 chars',zh:'轻松，约 140 字',tw:'輕鬆，約 140 字'}},
+ {id:'jobsdb',icon:'briefcase',limit:2000,name:{en:'Jobsdb / formal listing',zh:'职位平台正式简介',tw:'職位平台正式簡介'},sub:{en:'Plain listing format',zh:'简洁列表格式',tw:'簡潔列表格式'}},
+ {id:'email',icon:'pin',limit:700,name:{en:'Recruiter email',zh:'招聘邮件',tw:'招募郵件'},sub:{en:'Subject + body',zh:'主题 + 正文',tw:'主旨 + 正文'}}
+];
+const marketingCity={hk:{en:'Hong Kong',zh:'香港',tw:'香港'},sz:{en:'Shenzhen',zh:'深圳',tw:'深圳'}};
+const marketingMode={Hybrid:{en:'Hybrid',zh:'混合办公',tw:'混合辦公'},'On-site':{en:'On-site',zh:'现场办公',tw:'現場辦公'},Remote:{en:'Remote',zh:'远程',tw:'遠端'}};
+function cityKeyOf(c){return c==='Hong Kong'?'hk':c==='Shenzhen'?'sz':'hk'}
+function modeOf(p,l){return (marketingMode[p]&&marketingMode[p][l])||p||''}
+function cleanHashtag(s){return String(s||'').toLowerCase().replace(/[^a-z0-9一-鿿]+/g,'').slice(0,24)}
+function postForMarketing(input,isDraft){
+ const ck=cityKeyOf(input.city);
+ const skills=(isDraft?[]:(input.skills||[]));
+ const reqs=(isDraft?[]:(input.requirements||[]));
+ const bens=(isDraft?[]:(input.benefits||[]));
+ const cat=isDraft?'':input.category;
+ return {
+  id:input.id,isDraft:!!isDraft,
+  title:input.title||'',summary:input.summary||'',
+  company:isDraft?'Forma Studio':(input.company||'Forma Studio'),
+  cityKey:ck,mode:input.mode||'Hybrid',salary:input.salary||'',
+  req1:reqs[0]||skills[0]||'Genuine interest in this role',
+  req2:reqs[1]||skills[1]||'Clear communication and curiosity',
+  req3:reqs[2]||skills[2]||'Comfortable working across Hong Kong and Shenzhen',
+  ben1:bens[0]||'Flexible working arrangements',
+  ben2:bens[1]||'Supportive, cross-border team',
+  ben3:bens[2]||'A chance to shape something new',
+  hook:input.summary?(input.summary.split(/[.!?。!?]/,1)[0]||'').trim():'',
+  tagEn:cleanHashtag(cat||skills[0]||'careers'),
+  tagZh:cleanHashtag((cat||'招聘'))
+ };
+}
+const marketingTemplates={
+ linkedin:p=>({
+  en:`🎯 We're hiring: ${p.title} — ${p.company}\n`+
+      `📍 ${marketingCity[p.cityKey].en} · ${p.mode} · ${p.salary}\n\n`+
+      `${p.summary}\n\n`+
+      `What you'd bring:\n`+
+      `• ${p.req1}\n• ${p.req2}\n• ${p.req3}\n\n`+
+      `What we offer:\n`+
+      `• ${p.ben1}\n• ${p.ben2}\n• ${p.ben3}\n\n`+
+      `Interested? Drop a comment, send a DM, or apply via the link below. Every message gets read.\n\n`+
+      `#hiring #${p.cityKey} #${p.tagEn}`,
+  zh:`🎯 我们在招：${p.title} — ${p.company}\n`+
+      `📍 ${marketingCity[p.cityKey].zh} · ${modeOf(p.mode,'zh')} · ${p.salary}\n\n`+
+      `${p.summary}\n\n`+
+      `希望你具备：\n`+
+      `• ${p.req1}\n• ${p.req2}\n• ${p.req3}\n\n`+
+      `我们提供：\n`+
+      `• ${p.ben1}\n• ${p.ben2}\n• ${p.ben3}\n\n`+
+      `感兴趣欢迎留言、私信，或点击下方链接投递。每一条我们都会看到。\n\n`+
+      `#招聘 #${marketingCity[p.cityKey].zh} #${p.tagZh}`,
+  tw:`🎯 我們在招募：${p.title} — ${p.company}\n`+
+      `📍 ${marketingCity[p.cityKey].tw} · ${modeOf(p.mode,'tw')} · ${p.salary}\n\n`+
+      `${p.summary}\n\n`+
+      `希望你具備：\n`+
+      `• ${p.req1}\n• ${p.req2}\n• ${p.req3}\n\n`+
+      `我們提供：\n`+
+      `• ${p.ben1}\n• ${p.ben2}\n• ${p.ben3}\n\n`+
+      `有興趣歡迎留言、私訊，或點擊下方連結投遞。每一則我們都會看到。\n\n`+
+      `#招募 #${marketingCity[p.cityKey].tw} #${p.tagZh}`
+ }),
+ twitter:p=>({
+  en:`🎯 ${p.title} — ${p.company}\n${marketingCity[p.cityKey].en} · ${p.mode}\n\n${(p.summary.slice(0,140))}${(p.summary.length>140?'…':'')}\n\nApply via the link. We read every DM.\n\n#${p.tagEn} #${p.cityKey} #hiring`,
+  zh:`🎯 招 ${p.title} · ${marketingCity[p.cityKey].zh}\n${(p.summary.slice(0,100))}${(p.summary.length>100?'…':'')}\n\n私信获取投递方式，留言必回。\n\n#${p.tagZh} #${p.cityKey==='hk'?'香港招聘':'深圳招聘'}`,
+  tw:`🎯 招 ${p.title} · ${marketingCity[p.cityKey].tw}\n${(p.summary.slice(0,100))}${(p.summary.length>100?'…':'')}\n\n私訊獲取投遞方式，留言必回。\n\n#${p.tagZh} #${p.cityKey==='hk'?'香港招募':'深圳招募'}`
+ }),
+ xiaohongshu:p=>({
+  en:`🌿 ${p.title} 🌿\n📍 ${marketingCity[p.cityKey].en} · ${p.mode}\n💰 ${p.salary}\n\n${p.summary}\n\n✨ Perks: ${p.ben1} · ${p.ben2}\n📩 DM me for the full description and how to apply!\n\n#${p.tagEn} #${p.cityKey==='hk'?'hongkonglife':'shenzhenlife'} #hiring`,
+  zh:`🌿 ${p.title} · 招募中 🌿\n📍 ${marketingCity[p.cityKey].zh} · ${modeOf(p.mode,'zh')}\n💰 ${p.salary}\n\n${p.summary}\n\n✨ 福利：${p.ben1} · ${p.ben2}\n📩 感兴趣欢迎私信或留言，告知后会发完整 JD~\n\n#${p.tagZh} #${p.cityKey==='hk'?'香港生活':'深圳生活'} #找工作`,
+  tw:`🌿 ${p.title} · 招募中 🌿\n📍 ${marketingCity[p.cityKey].tw} · ${modeOf(p.mode,'tw')}\n💰 ${p.salary}\n\n${p.summary}\n\n✨ 福利：${p.ben1} · ${p.ben2}\n📩 有興趣歡迎私訊或留言，告知後會發完整 JD~\n\n#${p.tagZh} #${p.cityKey==='hk'?'香港生活':'深圳生活'} #找工作`
+ }),
+ wechat:p=>({
+  en:`🌱 Hiring a ${p.title} in ${marketingCity[p.cityKey].en} (${p.mode}). ${p.hook||`It's a great role on a small, cross-border team`}. DM me for the full description.`,
+  zh:`🌱 ${marketingCity[p.cityKey].zh}招 ${p.title}！${p.hook?(p.hook+'。'):''}${p.ben1}，${p.ben2}。有兴趣私我〜`,
+  tw:`🌱 ${marketingCity[p.cityKey].tw}招 ${p.title}！${p.hook?(p.hook+'。'):''}${p.ben1}，${p.ben2}。有興趣私我〜`
+ }),
+ jobsdb:p=>({
+  en:`JOB TITLE: ${p.title}\nCOMPANY: ${p.company}\nLOCATION: ${marketingCity[p.cityKey].en}\nWORK TYPE: ${p.mode} · Full-time\nSALARY: ${p.salary}\n\n${p.summary}\n\nREQUIREMENTS:\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\nBENEFITS:\n- ${p.ben1}\n- ${p.ben2}\n- ${p.ben3}`,
+  zh:`职位名称：${p.title}\n公司：${p.company}\n地点：${marketingCity[p.cityKey].zh}\n工作方式：${modeOf(p.mode,'zh')} · 全职\n薪资：${p.salary}\n\n${p.summary}\n\n要求：\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\n福利：\n- ${p.ben1}\n- ${p.ben2}\n- ${p.ben3}`,
+  tw:`職位名稱：${p.title}\n公司：${p.company}\n地點：${marketingCity[p.cityKey].tw}\n工作方式：${modeOf(p.mode,'tw')} · 全職\n薪資：${p.salary}\n\n${p.summary}\n\n要求：\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\n福利：\n- ${p.ben1}\n- ${p.ben2}\n- ${p.ben3}`
+ }),
+ email:p=>({
+  en:`Subject: We're hiring — ${p.title} (${marketingCity[p.cityKey].en}, ${p.mode})\n\nHi {{first_name}},\n\n${p.hook||`We're hiring a ${p.title}.`}\n\nIn this role, you'd bring:\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\nQuick details:\n- Location: ${marketingCity[p.cityKey].en}\n- Work style: ${p.mode}\n- Salary: ${p.salary}\n\nIf this sounds like you, reply to this email or send a DM — happy to share more.\n\nBest,\n${p.company} hiring`,
+  zh:`主题：我们在招 — ${p.title}（${marketingCity[p.cityKey].zh}，${modeOf(p.mode,'zh')}）\n\n您好，\n\n${p.hook||`我们在招 ${p.title}。`}\n\n希望你具备：\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\n工作要点：\n- 工作地：${marketingCity[p.cityKey].zh}\n- 工作模式：${modeOf(p.mode,'zh')}\n- 薪资：${p.salary}\n\n感兴趣欢迎直接回复邮件或留言，我们乐意进一步分享。\n\n顺颂时祺，\n${p.company} 招聘`,
+  tw:`主旨：我们在招募 — ${p.title}（${marketingCity[p.cityKey].tw}，${modeOf(p.mode,'tw')}）\n\n您好，\n\n${p.hook||`我們在招募 ${p.title}。`}\n\n希望你具備：\n- ${p.req1}\n- ${p.req2}\n- ${p.req3}\n\n工作要點：\n- 工作地：${marketingCity[p.cityKey].tw}\n- 工作模式：${modeOf(p.mode,'tw')}\n- 薪資：${p.salary}\n\n有興趣歡迎直接回信或留言，我們樂意進一步分享。\n\n順頌時祺，\n${p.company} 招募`
+ })
+};
+function getMarketingText(p,channelId,lang){
+ const edit=state.marketingEdits&&state.marketingEdits[p.id]&&state.marketingEdits[p.id][channelId]&&state.marketingEdits[p.id][channelId][lang];
+ if(typeof edit==='string')return edit;
+ const tpl=marketingTemplates[channelId];
+ if(!tpl)return'';
+ return(tpl(p)[lang]||'');
+}
+function setMarketingEdit(p,channelId,lang,text){
+ if(!state.marketingEdits[p.id])state.marketingEdits[p.id]={};
+ if(!state.marketingEdits[p.id][channelId])state.marketingEdits[p.id][channelId]={};
+ state.marketingEdits[p.id][channelId][lang]=text;
+}
+function clearMarketingEdit(p,channelId){
+ if(state.marketingEdits[p.id])delete state.marketingEdits[p.id][channelId];
+}
+function clearMarketingAll(p){delete state.marketingEdits[p.id]}
+function marketingSectionHtml(p,lang){
+ const L=(lang==='zh'||lang==='tw')?lang:'en';
+ const headName=lang==='zh'?'简体中文':lang==='tw'?'繁體中文':'EN';
+ return `<section class="marketing-section" data-job-id="${esc(p.id)}" data-is-draft="${p.isDraft?'1':'0'}" data-lang="${L}">
+  <div class="marketing-head">
+   <div class="marketing-head-left">
+    <span class="eyebrow">EMPLOYER MARKETING PIPELINE</span>
+    <h3>Marketing copy · ${esc(p.title)}</h3>
+   </div>
+   <div class="marketing-lang segmented" role="tablist" aria-label="Marketing language">
+    <button class="${L==='en'?'active':''}" data-marketing-lang="en" role="tab" aria-selected="${L==='en'}">EN</button>
+    <button class="${L==='zh'?'active':''}" data-marketing-lang="zh" role="tab" aria-selected="${L==='zh'}">简体中文</button>
+    <button class="${L==='tw'?'active':''}" data-marketing-lang="tw" role="tab" aria-selected="${L==='tw'}">繁體中文</button>
+   </div>
+  </div>
+  <p class="marketing-note">Template-based drafts tuned per channel. Edit any field — your changes save to this browser only. Now showing <strong>${esc(headName)}</strong>.</p>
+  <div class="marketing-cards">${marketingChannels.map(ch=>{
+   const text=getMarketingText(p,ch.id,L);
+   const count=text.length;
+   const over=count>ch.limit;
+   const chName=ch.name[L]||ch.name.en;
+   const chSub=ch.sub[L]||ch.sub.en;
+   return `<article class="marketing-card" data-channel="${ch.id}">
+    <header class="marketing-card-head">
+     <span class="marketing-card-icon">${icon(ch.icon)}</span>
+     <strong>${esc(chName)}</strong>
+     <small class="marketing-card-sub">${esc(chSub)}</small>
+     <span class="marketing-card-limit ${over?'over':''}" data-limit="${ch.limit}">${count} / ${ch.limit}</span>
+     <button class="icon-button" data-marketing-copy aria-label="Copy ${esc(chName)} copy" title="Copy">${icon('document')}</button>
+     <button class="icon-button" data-marketing-reset aria-label="Reset ${esc(chName)} to default" title="Reset to template">${icon('close')}</button>
+    </header>
+    <textarea data-marketing-text data-channel="${ch.id}" rows="6" spellcheck="false" aria-label="${esc(chName)} copy · ${esc(headName)}">${esc(text)}</textarea>
+   </article>`;
+  }).join('')}</div>
+  <div class="marketing-foot">
+   <button class="text-btn" data-marketing-reset-all>${icon('close')}Reset all edits</button>
+   <span>${marketingChannels.length} channels × 3 languages · template-based, no AI calls</span>
+  </div>
+ </section>`;
+}
+function marketingFindPost(section){
+ const jobId=section.dataset.jobId;
+ const isDraft=section.dataset.isDraft==='1';
+ const src=isDraft?state.vacancies:jobs;
+ return {post:postForMarketing(src.find(x=>x.id===jobId),isDraft),isDraft};
+}
+function marketingRefreshCard(section,channelId){
+ const {post}=marketingFindPost(section);
+ if(!post.id)return;
+ const lang=section.dataset.lang;
+ const card=section.querySelector(`.marketing-card[data-channel="${channelId}"]`);
+ if(!card)return;
+ const ch=marketingChannels.find(c=>c.id===channelId);
+ const ta=card.querySelector('[data-marketing-text]');
+ ta.value=getMarketingText(post,channelId,lang);
+ const limitChip=card.querySelector('.marketing-card-limit');
+ const len=ta.value.length;
+ limitChip.textContent=`${len} / ${ch.limit}`;
+ limitChip.classList.toggle('over',len>ch.limit);
+}
+function marketingRefreshAll(section,lang){
+ section.dataset.lang=lang;
+ section.querySelectorAll('[data-marketing-lang]').forEach(b=>b.classList.toggle('active',b.dataset.marketingLang===lang));
+ marketingChannels.forEach(ch=>marketingRefreshCard(section,ch.id));
+}
+function copyMarketingText(text){
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text))}
+ else fallbackCopy(text);
+}
+function fallbackCopy(text){
+ const ta=document.createElement('textarea');
+ ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+ document.body.appendChild(ta);ta.select();
+ try{document.execCommand('copy')}catch{}
+ document.body.removeChild(ta);
+}
+
 function openDialog(name,body,drawer=false,actions=''){modal.className=drawer?'drawer':'';modal.innerHTML=`<div class="dialog-head"><h2 id="dialog-title">${name}</h2><button class="icon-button" data-action="close-modal" aria-label="Close dialog">${icon('close')}</button></div><div class="dialog-body">${body}</div>${actions}`;if(!modal.open)modal.showModal();modal.scrollTop=0}
-function showJob(id){const j=jobs.find(x=>x.id===id);if(!j)return;const already=state.applications.some(a=>a.jobId===id);openDialog('A closer look',`${logo(j,true)}<h2 class="detail-title">${esc(title(j))}</h2><p class="detail-company">${j.company} · ${city(j.city)} · ${j.area}</p><div class="tag-row">${j.skills.map(s=>`<span class="tag mint">${s}</span>`).join('')}</div><div class="detail-meta"><div><small>Monthly base salary</small><strong>${j.salary}</strong></div><div><small>Work arrangement</small><strong>${j.mode} · Full-time</strong></div><div><small>Destination</small><strong>${city(j.city)}</strong></div><div><small>Employer support</small><strong>${j.sponsor?'Open to discussion':'Ask the employer'}</strong></div></div><div class="detail-section"><h3>A little about the opportunity</h3><p>${j.summary}</p></div><div class="detail-section"><h3>What you bring</h3><ul>${j.requirements.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="detail-section"><h3>The practical details</h3><ul>${j.benefits.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="notice">${icon('globe')} Moving across the border? Clarify work permission, language expectations and the full employment package. Sponsorship discussion does not guarantee permission. <a href="#resources" data-modal-view="resources">Open the cross-border guide</a>.</div><p class="language-note">Fictional opportunity for demo use. Salary is shown in the original currency, before deductions. No exchange-rate comparison is made.</p>`,true,`<div class="detail-actions"><button class="btn btn-primary" data-apply="${id}" ${already?'disabled':''}>${already?'Demo application saved':t('apply')}${icon(already?'check':'arrow')}</button><button class="btn btn-outline" data-save="${id}" aria-pressed="${state.saved.includes(id)}">${icon('bookmark')}${t(state.saved.includes(id)?'unsave':'save')}</button></div>`)}
+
+// === Apply portal (full-page external-style careers site) ==============
+function agentStepsFor(j,profile){
+ const jobTitle=title(j);
+ const firstName=(profile.name||'').split(' ')[0]||'there';
+ return [
+  {id:'load-profile',label:'Reading your saved profile',detail:`${esc(profile.name||'You')} · ${esc(profile.headline||'profile')}`,dur:520},
+  {id:'scan-form',label:'Scanning the form on this careers portal',detail:`Mapped 6 input fields, 1 consent checkbox, 1 submit button`,dur:380},
+  {id:'read-jd',label:`Reading the "${esc(jobTitle)}" job description for context`,detail:`Picking up keywords + cross-border signals`,dur:720},
+  {id:'type-name',label:'Filling in your name',detail:`Typing "${esc(profile.name||'')}" character by character`,dur:520,field:'name',value:profile.name||'',type:true},
+  {id:'validate-email',label:'Validating email format before submitting',detail:`→ matches RFC 5322 pattern · domain reachable`,dur:300},
+  {id:'type-email',label:'Filling in your email',detail:`Typing "${esc(profile.email||'')}" character by character`,dur:720,field:'email',value:profile.email||'',type:true},
+  {id:'skip-phone',label:'Detecting phone as optional · skipping it',detail:`→ left empty (you can fill it in manually later)`,dur:360},
+  {id:'pick-location',label:'Selecting your current location',detail:`→ "${esc(profile.destination||'Hong Kong')}" based on your destination preference`,dur:560,field:'location',value:profile.destination||'Hong Kong'},
+  {id:'pick-workauth',label:'Choosing your work-authorisation answer',detail:`→ "${esc(profile.status||'Not sure yet')}" from your saved profile`,dur:660,field:'workauth',value:profile.status||'Not sure yet'},
+  {id:'draft-cover',label:'Drafting a short cover letter tailored to this role',detail:`Using ${esc(jobTitle)} + your headline · kept under 1,500 chars`,dur:1450,field:'cover',value:`Hi Forma Studio team,\n\nI'm applying for the ${jobTitle} role because your cross-border setup matches the way I like to work — small teams, real ownership, and product decisions that travel with the user. My recent work as ${profile.headline||'a product builder'} has prepared me to contribute from day one.\n\nHappy to share work samples if useful.\n\n— ${firstName}`},
+  {id:'review-fields',label:'Reviewing accuracy of all 6 fields',detail:`Cross-checked against saved profile · no edits needed`,dur:540},
+  {id:'confirm-consent',label:'Confirming the consent checkbox',detail:`You stay in control — agent pauses here for your review`,dur:520,field:'consent',value:true},
+  {id:'queue',label:`Pushing the application to ${esc(j.company)}'s hiring queue`,detail:`Connecting to ${esc(j.company)}'s applicant tracking system`,dur:580},
+  {id:'submit',label:`Submitting the application on ${esc(j.company)}'s site`,detail:`Clicking Submit · you'll see confirmation next`,dur:780,action:'submit'}
+ ];
+}
+function applyResetState(){
+ state.applyAgentUsed=false;
+ state.agentRunning=false;
+ state.agentStep=null;
+ state.agentCompletedSteps=[];
+}
+function applyPortalPage(j){
+ const profile=state.profile;
+ const steps=agentStepsFor(j,profile);
+ const already=state.applications.some(a=>a.jobId===j.id);
+ const consentOptions=['Permission to work','Application in progress','Exploring','Not sure yet'];
+ return `<div class="apply-portal">
+  <header class="apply-portal-header">
+   <button class="apply-back" data-apply-back aria-label="Back to Across">${icon('arrow')}<span>Back to Across</span></button>
+   <small>Applying on <strong>Forma Studio's</strong> careers portal</small>
+   <span class="apply-pill">EXTERNAL COMPANY SITE</span>
+  </header>
+  <section class="apply-portal-hero">
+   <span class="apply-portal-logo" style="--logo-bg:${j.bg};--logo-ink:${j.ink}" aria-hidden="true">${j.initial}</span>
+   <small class="eyebrow">HIRING ACROSS BORDERS</small>
+   <h1>${esc(j.company)} careers</h1>
+   <p>A small studio shaping financial products from Hong Kong to Shenzhen. We move carefully, talk plainly and ship.</p>
+  </section>
+  <section class="apply-role">
+   <div class="apply-role-head">
+    <h2>${esc(title(j))}</h2>
+    <span class="status-badge mint">${j.mode}</span>
+   </div>
+   <p class="apply-role-meta">${city(j.city)} · ${j.area} · ${j.salary} · Full-time</p>
+   <p class="apply-role-summary">${esc(j.summary)}</p>
+   <h3>What you'd bring</h3>
+   <ul>${j.requirements.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+   <h3>The practical details</h3>
+   <ul>${j.benefits.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+  </section>
+  <section class="apply-form-wrap">
+   <header class="apply-form-head">
+    <small class="eyebrow">FORM ON COMPANY SITE</small>
+    <h2>Apply for this role</h2>
+    <p>Forma Studio reviews every application personally. Submit manually or let the AI agent fill the form on your behalf.</p>
+   </header>
+   <div class="apply-agent-card panel" data-agent-card>
+    <span class="agent-icon">${icon('route')}</span>
+    <div>
+     <strong>Run the AI agent</strong>
+     <small>The agent reads your saved profile, scans the portal, drafts a tailored cover letter, ticks consent and submits on your behalf — about 14 steps and ~9 seconds. You stay in control of consent and submit.</small>
+    </div>
+    <button class="btn btn-primary" data-apply-run-agent ${already?'disabled':''}>${icon('route')} Run AI Agent</button>
+   </div>
+   <form id="apply-form" data-job-id="${esc(j.id)}" autocomplete="on">
+    <div class="form-grid">
+     <label class="field">Your name<input name="name" required maxlength="80" value="${esc(profile.name||'')}"></label>
+     <label class="field">Email<input type="email" name="email" required maxlength="150" value="${esc(profile.email||'')}"></label>
+     <label class="field">Phone (optional)<input name="phone" type="tel" maxlength="40" placeholder="Not required — leave blank"></label>
+     <label class="field">Current location<select name="location" required>
+      ${['Hong Kong','Shenzhen','Other'].map(o=>`<option ${profile.destination===o?'selected':''}>${o}</option>`).join('')}
+     </select></label>
+     <label class="field full-width">Work authorisation<select name="workauth" required>
+      ${consentOptions.map(o=>`<option ${(profile.status||'Not sure yet')===o?'selected':''}>${o}</option>`).join('')}
+     </select><small>Forma Studio uses this to plan sponsorship conversations. Confirming or selecting "Not sure yet" is fine.</small></label>
+    </div>
+    <label class="field full-width">Why are you interested in this role? (optional)<textarea name="cover" maxlength="1500" placeholder="A short note that helps the hiring team understand your fit."></textarea></label>
+    <label class="check-field"><input type="checkbox" name="consent" required><span>I confirm the information above is accurate and I consent to Forma Studio reviewing my application.</span></label>
+    <div class="apply-actions">
+     <button type="submit" class="btn btn-primary" ${already?'disabled':''}>Submit application ${icon('arrow')}</button>
+     <button type="button" class="btn btn-outline" data-apply-back>Cancel</button>
+    </div>
+   </form>
+   <div class="agent-trace panel" data-agent-trace hidden>
+    <header class="agent-trace-head">
+     <span class="agent-icon">${icon('route')}</span>
+     <div>
+      <h3>AI Agent activity</h3>
+      <p>Live trace · Each step is a decision or action the agent makes on your behalf.</p>
+     </div>
+    </header>
+    <ol class="agent-trace-list">${steps.map(s=>{
+     const status=state.agentCompletedSteps.includes(s.id)?'done':state.agentStep===s.id?'active':'pending';
+     return `<li data-step="${s.id}" data-status="${status}">
+      <span class="agent-step-marker" aria-hidden="true"></span>
+      <span class="agent-step-body"><strong>${s.label}</strong><small>${s.detail}</small></span>
+     </li>`;
+    }).join('')}</ol>
+    <div class="agent-trace-actions">
+     <button class="text-btn" data-apply-cancel-agent>${icon('close')} Stop the agent</button>
+     <span>${icon('shield')} Agent runs locally · you stay in control of consent and submit</span>
+    </div>
+   </div>
+  </section>
+ </div>`;
+}
+function applyPortalSuccess(j){
+ const success=state.applySuccess||{};
+ return `<div class="apply-portal">
+  <header class="apply-portal-header">
+   <button class="apply-back" data-apply-back aria-label="Back to Across">${icon('arrow')}<span>Back to Across</span></button>
+   <small>${esc(j.company)} · Application received</small>
+  </header>
+  <div class="apply-success">
+   <span class="success-icon">${icon('check')}</span>
+   <h2>Your application was submitted.</h2>
+   <p>Forma Studio received your application${success.date?` on <strong>${esc(success.date)}</strong>`:''}. They reply within five working days.</p>
+   ${success.agent?`<p class="apply-agent-badge">${icon('route')} Submitted with AI agent assistance · ${esc((state.agentCompletedSteps||[]).length)} steps taken</p>`:''}
+   <div class="apply-success-actions">
+    <button class="btn btn-primary" data-modal-view="applications">View my applications ${icon('arrow')}</button>
+    <button class="btn btn-outline" data-apply-back>Back to discover</button>
+   </div>
+   <p class="muted small">A demo record is saved in this browser. Nothing leaves your device.</p>
+  </div>
+ </div>`;
+}
+function applyRunAgent(){
+ if(state.agentRunning||!state.applyTarget)return;
+ const j=jobs.find(x=>x.id===state.applyTarget);
+ if(!j||state.applications.some(a=>a.jobId===j.id))return;
+ state.agentRunning=true;
+ state.applyAgentUsed=true;
+ state.agentCompletedSteps=[];
+ state.agentStep=null;
+ const trace=document.querySelector('[data-agent-trace]');
+ if(trace){trace.hidden=false;trace.scrollIntoView({behavior:'smooth',block:'start'})}
+ const steps=agentStepsFor(j,state.profile);
+ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+ const updateUi=()=>{
+  document.querySelectorAll('[data-agent-trace] [data-step]').forEach(li=>{
+   const id=li.dataset.step;
+   if(state.agentCompletedSteps.includes(id))li.dataset.status='done';
+   else if(state.agentStep===id)li.dataset.status='active';
+   else li.dataset.status='pending';
+  });
+  const active=document.querySelector('[data-agent-trace] li[data-status="active"]');
+  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
+ };
+ async function applyToField(step){
+  const f=document.querySelector(`[name="${step.field}"]`);
+  if(!f)return;
+  if(step.field==='consent'){f.checked=!!step.value;f.dispatchEvent(new Event('change',{bubbles:true}));f.classList.add('agent-filled');return}
+  if(step.type){
+   // Type character by character so the demo viewer sees the agent actively fill the input
+   f.value='';f.classList.add('agent-filled');
+   for(let i=0;i<step.value.length;i++){
+    f.value=step.value.slice(0,i+1);
+    f.dispatchEvent(new Event('input',{bubbles:true}));
+    await sleep(22);
+   }
+   return;
+  }
+  f.value=step.value;f.classList.add('agent-filled');f.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+ (async()=>{
+  for(let i=0;i<steps.length;i++){
+   const step=steps[i];
+   if(!state.agentRunning)return;
+   state.agentStep=step.id;
+   updateUi();
+   if(step.field){await applyToField(step);await sleep(Math.max(60,(step.dur||400)-step.value.length*22))}
+   else{await sleep(step.dur||400)}
+   if(!state.agentRunning)return;
+   if(step.action==='submit'){
+    state.agentCompletedSteps.push(step.id);
+    updateUi();
+    await sleep(280);
+    if(!state.agentRunning)return;
+    state.agentStep=null;state.agentRunning=false;
+    const form=document.querySelector('#apply-form');
+    if(form)form.requestSubmit();
+    return;
+   }
+   state.agentCompletedSteps.push(step.id);
+   state.agentStep=null;
+   updateUi();
+  }
+  state.agentStep=null;state.agentRunning=false;updateUi();
+ })();
+}
+
+function applyPortalSuccessNow(j,agent){state.applySuccess={date:new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Hong_Kong'}).format(new Date()),agent};state.agentRunning=false;state.agentStep=null;render()}
+
+function showJob(id){const j=jobs.find(x=>x.id===id);if(!j)return;const already=state.applications.some(a=>a.jobId===id);const p=postForMarketing(j,false);openDialog('A closer look',`${logo(j,true)}<h2 class="detail-title">${esc(title(j))}</h2><p class="detail-company">${j.company} · ${city(j.city)} · ${j.area}</p><div class="tag-row">${j.skills.map(s=>`<span class="tag mint">${s}</span>`).join('')}</div><div class="detail-meta"><div><small>Monthly base salary</small><strong>${j.salary}</strong></div><div><small>Work arrangement</small><strong>${j.mode} · Full-time</strong></div><div><small>Destination</small><strong>${city(j.city)}</strong></div><div><small>Employer support</small><strong>${j.sponsor?'Open to discussion':'Ask the employer'}</strong></div></div><div class="detail-section"><h3>A little about the opportunity</h3><p>${j.summary}</p></div><div class="detail-section"><h3>What you bring</h3><ul>${j.requirements.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="detail-section"><h3>The practical details</h3><ul>${j.benefits.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="notice">${icon('globe')} Moving across the border? Clarify work permission, language expectations and the full employment package. Sponsorship discussion does not guarantee permission. <a href="#resources" data-modal-view="resources">Open the cross-border guide</a>.</div><p class="language-note">Fictional opportunity for demo use. Salary is shown in the original currency, before deductions. No exchange-rate comparison is made.</p>${state.workspace==='employer'?marketingSectionHtml(p,state.lang):''}`,true,`<div class="detail-actions"><button class="btn btn-primary" data-apply="${id}" ${already?'disabled':''}>${already?'Demo application saved':'Apply on company site'}${icon(already?'check':'arrow')}</button><button class="btn btn-outline" data-save="${id}" aria-pressed="${state.saved.includes(id)}">${icon('bookmark')}${t(state.saved.includes(id)?'unsave':'save')}</button></div>`)}
 function applyDialog(id){const j=jobs.find(x=>x.id===id);if(!j)return;openDialog('Your next step',`<div style="display:flex;gap:14px;align-items:center">${logo(j)}<div><h3>${esc(title(j))}</h3><p class="muted small" style="margin-top:4px">${j.company} · ${city(j.city)}</p></div></div><form id="application-form" data-job-id="${id}"><div class="notice">Try the application experience. Nothing will be sent, and no real CV is required.</div><div class="form-grid"><label class="field full-width">Your profile<input value="${esc(state.profile.name)} · ${esc(state.profile.headline)}" readonly></label><label class="field full-width">A short introduction (optional)<textarea name="note" maxlength="1500" placeholder="What interests you about this opportunity?"></textarea></label></div><label class="check-field"><input type="checkbox" required><span>I understand this is a demo application stored only in this browser. No employer will receive it.</span></label><button type="submit" class="btn btn-primary full">Save demo application ${icon('arrow')}</button></form>`)}
 function featureDialog(id){const f=features.find(x=>x.id===id);if(!f)return;openDialog(f.name,`<span class="feature-icon" style="display:inline-flex">${icon(f.icon)}</span><h2 style="font-size:24px;margin-top:22px">${f.sub}</h2><p style="font-size:12px;line-height:1.9;color:#8a997b;margin-top:13px">${f.body}</p><ul class="credentials">${f.steps.map((x,i)=>`<li><span class="avatar" style="width:26px;height:26px;font-size:10px;background:#eef3e8">0${i+1}</span><strong>${x}</strong></li>`).join('')}</ul><div class="notice">Planned for a later phase. This screen explains the concept; the feature is not implemented in this prototype.</div><button class="btn btn-outline full" data-action="close-modal" style="margin-top:22px">Got it ${icon('check')}</button>`)}
 function newVacancy(){openDialog('Create a demo opportunity',`<form id="vacancy-form"><p class="muted small" style="line-height:1.8">Build a local draft for either market. No listing is published.</p><div class="form-grid"><label class="field full-width">Job title<input name="title" required maxlength="100" placeholder="e.g. Senior Product Designer"></label><label class="field">Destination<select name="city"><option>Hong Kong</option><option>Shenzhen</option></select></label><label class="field">Work arrangement<select name="mode"><option>Hybrid</option><option>On-site</option><option>Remote</option></select></label><label class="field full-width">Monthly base salary, with currency<input name="salary" required maxlength="80" placeholder="e.g. HK$35,000–45,000"></label><label class="field full-width">About the opportunity<textarea name="summary" required maxlength="2500" placeholder="Responsibilities, expectations and what your team offers"></textarea></label></div><button class="btn btn-primary full" type="submit" style="margin-top:24px">Save local draft ${icon('check')}</button></form>`)}
 function toggleSave(id){if(!jobs.some(j=>j.id===id))return;const existed=state.saved.includes(id);state.saved=existed?state.saved.filter(x=>x!==id):[...state.saved,id];const saved=persist();render();if(modal.open&&modal.classList.contains('drawer'))showJob(id);if(saved)toast(existed?'Removed from your saved jobs':'Saved for your next chapter')}
 document.addEventListener('click',e=>{
+ const mk=e.target.closest('[data-marketing-lang],[data-marketing-copy],[data-marketing-reset],[data-marketing-reset-all],[data-apply-run-agent],[data-apply-cancel-agent],[data-apply-back]');
+ if(mk){
+  if(mk.dataset.applyRunAgent!==undefined){applyRunAgent();return}
+  if(mk.dataset.applyCancelAgent!==undefined){state.agentRunning=false;toast('Agent stopped');return}
+  if(mk.dataset.applyBack!==undefined){applyResetState();navigate('discover');return}
+  const section=mk.closest('.marketing-section');
+  if(section){
+   const jobId=section.dataset.jobId;
+   const isDraft=section.dataset.isDraft==='1';
+   const src=isDraft?state.vacancies:jobs;
+   const input=src.find(x=>x.id===jobId);
+   if(input){
+    const p=postForMarketing(input,isDraft);
+    if(mk.dataset.marketingLang){marketingRefreshAll(section,mk.dataset.marketingLang);return}
+    if(mk.dataset.marketingCopy!==undefined){const card=mk.closest('.marketing-card');const ta=card&&card.querySelector('[data-marketing-text]');if(ta){copyMarketingText(ta.value);toast('Copied to clipboard');}return}
+    if(mk.dataset.marketingReset!==undefined){const card=mk.closest('.marketing-card');const cid=card&&card.dataset.channel;if(cid){clearMarketingEdit(p,cid);persist();marketingRefreshCard(section,cid);toast('Reset to default');}return}
+    if(mk.dataset.marketingResetAll!==undefined){clearMarketingAll(p);persist();section.outerHTML=marketingSectionHtml(p,section.dataset.lang);toast('All marketing copy reset');return}
+   }
+  }
+  return;
+ }
  const button=e.target.closest('[data-view],[data-save],[data-job],[data-city],[data-action],[data-feature],[data-apply],[data-modal-view],[data-draft]');if(!button)return;
  if(button.dataset.view){navigate(button.dataset.view);return}
  if(button.dataset.modalView){e.preventDefault();modal.close();navigate(button.dataset.modalView);return}
@@ -111,8 +518,8 @@ document.addEventListener('click',e=>{
  if(button.dataset.job){showJob(button.dataset.job);return}
  if(button.dataset.city){state.city=button.dataset.city;state.expanded=false;render();return}
  if(button.dataset.feature){featureDialog(button.dataset.feature);return}
- if(button.dataset.apply){applyDialog(button.dataset.apply);return}
- if(button.dataset.draft){const d=state.vacancies.find(x=>x.id===button.dataset.draft);if(d)openDialog('Local draft preview',`<span class="tag">Unpublished demo draft</span><h2 style="margin-top:19px">${esc(d.title)}</h2><p class="muted small" style="margin-top:12px">${esc(d.city)} · ${esc(d.mode)} · ${esc(d.salary)}</p><p style="font-size:12px;line-height:1.9;white-space:pre-wrap;margin-top:22px">${esc(d.summary)}</p>`);return}
+ if(button.dataset.apply){state.applyTarget=button.dataset.apply;state.applySuccess=null;applyResetState();if(modal.open)modal.close();navigate('apply');return}
+ if(button.dataset.draft){const d=state.vacancies.find(x=>x.id===button.dataset.draft);if(d){const p=postForMarketing(d,true);openDialog('Local draft preview',`<span class="tag">Unpublished demo draft</span><h2 style="margin-top:19px">${esc(d.title)}</h2><p class="muted small" style="margin-top:12px">${esc(d.city)} · ${esc(d.mode)} · ${esc(d.salary)}</p><p style="font-size:12px;line-height:1.9;white-space:pre-wrap;margin-top:22px">${esc(d.summary)}</p>${marketingSectionHtml(p,state.lang)}`);}return}
  switch(button.dataset.action){
   case 'switch-workspace':state.workspace=state.workspace==='candidate'?'employer':'candidate';navigate(state.workspace==='employer'?'employer':'discover');break;
   case 'close-modal':modal.close();break;
@@ -137,8 +544,34 @@ document.addEventListener('change',e=>{
   document.querySelector('#work-status-panel').innerHTML=workStatusFields(e.target.value);
  }
 });
+let marketingPersistTimer;
+document.addEventListener('input',e=>{
+ if(e.target.dataset&&e.target.dataset.marketingText!==undefined){
+  const section=e.target.closest('.marketing-section');
+  if(!section)return;
+  const jobId=section.dataset.jobId;
+  const isDraft=section.dataset.isDraft==='1';
+  const src=isDraft?state.vacancies:jobs;
+  const input=src.find(x=>x.id===jobId);
+  if(!input)return;
+  const p=postForMarketing(input,isDraft);
+  setMarketingEdit(p,e.target.dataset.channel,section.dataset.lang,e.target.value);
+  const card=e.target.closest('.marketing-card');
+  if(card){
+   const ch=marketingChannels.find(c=>c.id===card.dataset.channel);
+   const limitChip=card.querySelector('.marketing-card-limit');
+   const len=e.target.value.length;
+   if(limitChip&&ch){
+    limitChip.textContent=`${len} / ${ch.limit}`;
+    limitChip.classList.toggle('over',len>ch.limit);
+   }
+  }
+  clearTimeout(marketingPersistTimer);
+  marketingPersistTimer=setTimeout(()=>persist(),400);
+ }
+});
 document.addEventListener('submit',e=>{
- if(!['search-form','profile-form','application-form','vacancy-form'].includes(e.target.id))return;e.preventDefault();const data=Object.fromEntries(new FormData(e.target));
+ if(!['search-form','profile-form','application-form','vacancy-form','apply-form'].includes(e.target.id))return;e.preventDefault();const data=Object.fromEntries(new FormData(e.target));
  if(e.target.id==='search-form'){state.query=data.query.trim();state.expanded=true;render();return}
  if(e.target.id==='profile-form'){Object.assign(state.profile,data);if(persist())toast('Profile saved in this browser');render();return}
  if(e.target.id==='application-form'){
@@ -147,6 +580,20 @@ document.addEventListener('submit',e=>{
   openDialog('One step closer',`<div class="success-state"><span class="success-icon">${icon('check')}</span><h2>${saved?'Your demo application is saved.':'Demo completed for this visit.'}</h2><p>Nothing has been sent to ${esc(jobs.find(j=>j.id===id).company)}.<br>${saved?'You can revisit it in My applications.':'Browser storage is unavailable; this application will not survive a reload.'}</p><button class="btn btn-primary" data-modal-view="applications">View my applications ${icon('arrow')}</button></div>`);return;
  }
  if(e.target.id==='vacancy-form'){state.vacancies.push({...data,id:crypto.randomUUID()});const saved=persist();modal.close();navigate('vacancies');if(saved)toast('Demo draft saved. Nothing has been published.')}
+ if(e.target.id==='apply-form'){
+  const id=e.target.dataset.jobId;
+  if(state.applications.some(a=>a.jobId===id)){toast('You already saved a demo application for this role.');return}
+  const consentChecked=e.target.querySelector('[name="consent"]')&&e.target.querySelector('[name="consent"]').checked;
+  if(!consentChecked){toast('Please confirm the consent checkbox before submitting.');return}
+  const today=new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Hong_Kong'}).format(new Date());
+  state.applications.unshift({jobId:id,note:data.cover||'',date:today,agent:!!state.applyAgentUsed});
+  const saved=persist();
+  state.applySuccess={date:today,agent:!!state.applyAgentUsed};
+  state.agentRunning=false;state.agentStep=null;
+  render();
+  if(saved)toast(state.applySuccess.agent?'Application submitted with AI agent assistance':'Application submitted');
+  return;
+ }
 });
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();if(modal.open)modal.close();if(!['discover','saved'].includes(state.view))navigate('discover');document.querySelector('#job-search')?.focus()}if(e.key==='Escape'){document.querySelector('.sidebar')?.classList.remove('open');document.querySelector('.mobile-scrim')?.classList.remove('open');document.querySelector('.mobile-menu')?.setAttribute('aria-expanded','false')}});
 modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modal.close()}});
