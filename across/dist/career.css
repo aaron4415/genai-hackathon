@@ -22,3 +22,17 @@
 @media(max-width:1100px){.career-workbench{grid-template-columns:1fr}.career-profile-preview{max-width:780px}.career-steps{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.career-steps{gap:7px}.career-steps span{font-size:10px;padding:12px 8px}.career-workbench{gap:5px}.career-workbench .panel{padding:20px 16px}.career-actions .btn{padding:11px 12px}.public-talent-body{padding:0 22px 24px}.public-talent-body h1{font-size:26px}.public-talent-cover{padding:20px}.career-status{font-size:10px;gap:10px}.public-talent-page{padding:22px 12px 40px}}
 @media print{body.career-printing>*{display:none!important}body.career-printing>#career-print{display:block!important;white-space:pre-wrap;font:12pt/1.65 Arial,"Microsoft YaHei",sans-serif;color:#000;background:white;margin:10mm;overflow-wrap:anywhere}body.career-printing{background:white!important}}
+
+/* Career workspaces inherit their feature colour from the app shell. */
+.career-workbench .panel{border-top:3px solid var(--feature-accent)}
+.career-workbench h2,.career-draft-section h3,.career-share-review h3,.career-profile-preview>h2{color:var(--feature-accent)}
+.career-steps span{color:var(--feature-accent);background:var(--feature-tint);border-color:#c8d9ed}
+.career-workbench .text-btn:not([data-career="remove-fact"]):not([data-career="delete-draft"]),.career-workbench summary{color:var(--feature-accent)}
+.career-workbench .career-fact{background:var(--feature-tint);border-color:#c8d9ed}
+.career-fact-top strong{color:var(--feature-accent)}
+.career-empty{background:var(--feature-tint)}
+.public-talent-card{--profile-accent:#237461;--profile-tint:#e8f5ef;border-color:#c6dfd6}
+.public-talent-cover{background:radial-gradient(circle at 85% 30%,#bce4d9,transparent 45%),linear-gradient(110deg,#d9efe8,#f0faf6)}
+.public-talent-cover>span:last-child,.public-headline,.public-talent-body h2{color:var(--profile-accent)}
+.public-avatar{background:var(--profile-accent)}
+.public-contact,.career-share-review{background:#e8f5ef;border-color:#c6dfd6}
