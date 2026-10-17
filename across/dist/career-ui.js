@@ -47,7 +47,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
         <label class="field">${tr('sourceLanguage')}${languages(data.sourceLanguage, 'data-career-source-language')}</label>
         <label class="field">${tr('sourceNotes')}<textarea data-career-source rows="6" maxlength="24000" placeholder="${esc(tr('notesPlaceholder'))}">${esc(data.source)}</textarea></label>
         <div class="career-actions"><button class="btn btn-primary" data-career="extract">${tr('reviewFacts')}</button><label class="btn btn-outline career-upload">${tr('importText')}<input type="file" data-career-file accept=".txt,text/plain"></label><button class="text-btn" data-career="sample">${tr('loadFacts')}</button></div>
-        <small class="career-help">${tr('importHelp')}</small>
+        <small class="career-help">${tr('importHelp')}</small><p class="career-demo-note">${tr('cvDemoHelp')}</p>
       </section>
       <section class="panel"><div class="section-heading"><h2>${tr('factsTitle')}</h2><span class="tag mint" id="career-fact-count">${tr('approvedCount',{count,total:data.facts.length})}</span></div><p>${tr('factHelp')}</p>
       ${data.facts.length ? data.facts.map((f, index) => `<article class="career-fact" data-fact="${esc(f.id)}"><div class="career-fact-top"><strong>${tr('factNumber',{number:index+1})}</strong><label class="sr-only" for="kind-${esc(f.id)}">${tr('factCategory',{number:index+1})}</label><select id="kind-${esc(f.id)}" data-fact-kind>${FACT_KINDS.map(kind => `<option value="${kind}" ${f.kind === kind ? 'selected' : ''}>${tr(kind)}</option>`).join('')}</select><button class="text-btn" data-career="remove-fact" data-id="${esc(f.id)}">${tr('remove')}</button></div>
@@ -58,7 +58,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
       </div><div>
       <section class="panel"><h2>${tr('tailorTitle')}</h2><p>${tr('tailorHelp')}</p>
         <label class="field">${tr('task')}<select data-cv="task"><option value="tailor" ${data.cv.task === 'tailor' ? 'selected' : ''}>${tr('tailorTask')}</option><option value="translate" ${data.cv.task === 'translate' ? 'selected' : ''}>${tr('translateTask')}</option></select></label>
-        <label class="field">${tr('sampleJd')}<select data-career-job><option value="">${tr('chooseRole')}</option>${jobs.map(j => `<option value="${esc(j.id)}">${esc(getJobTitle(j))} · ${esc(j.company)}</option>`).join('')}</select></label>
+        <label class="field">${tr('sampleJd')}<select data-career-job><option value="">${tr('chooseRole')}</option>${jobs.map(j => `<option value="${esc(j.id)}" ${j.company === data.cv.company && (j.title === data.cv.role || getJobTitle(j) === data.cv.role) ? 'selected' : ''}>${esc(getJobTitle(j))} · ${esc(j.company)}</option>`).join('')}</select></label>
         <div class="form-grid"><label class="field">${tr('company')}<input data-cv="company" maxlength="120" value="${esc(data.cv.company)}"></label><label class="field">${tr('role')}<input data-cv="role" maxlength="120" value="${esc(data.cv.role)}"></label></div>
         <label class="field">${tr('jd')}<textarea data-cv="jd" maxlength="10000" rows="6" placeholder="${esc(tr('jdPlaceholder'))}">${esc(data.cv.jd)}</textarea></label>
         <label class="field">${tr('outputLanguage')}${languages(data.cv.language, 'data-cv="language"')}</label>
@@ -104,7 +104,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
         <label class="field">${tr('displayName')}<input maxlength="80" data-talent="name" value="${esc(t.name)}"></label>
         <div class="form-grid"><label class="field">${tr('city')}<input data-talent="city" maxlength="80" value="${esc(t.city)}"></label><label class="field">${tr('skillsInterests')}<input data-talent="skills" maxlength="400" value="${esc(t.skills)}"></label></div>
         <label class="field">${tr('contactMethod')}<input data-talent="contact" maxlength="200" value="${esc(t.contact)}" placeholder="${esc(tr('contactPlaceholder'))}"></label>
-        <div class="career-actions"><button class="text-btn" data-career="profile-from-candidate">${tr('useCandidate')}</button><button class="text-btn" data-career="sample-profile">${tr('loadProfile')}</button></div>
+        <div class="career-actions"><button class="text-btn" data-career="profile-from-candidate">${tr('useCandidate')}</button><button class="text-btn" data-career="sample-profile">${tr('loadProfile')}</button></div><p class="career-demo-note">${tr('profileDemoHelp')}</p>
       </section><section class="panel"><h2>${tr('languageVersions')}</h2><label class="field">${tr('editingLanguage')}${languages(lang, 'data-profile-language')}</label>
         <label class="field">${tr('headline')}<input data-profile-text="headline" maxlength="160" value="${esc(l.headline)}"></label>
         <label class="field">${tr('about')}<textarea data-profile-text="about" maxlength="1200" rows="6" placeholder="${esc(tr('aboutPlaceholder'))}">${esc(l.about)}</textarea></label>
@@ -149,7 +149,14 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
     if (busy && ['generate', 'translate-profile'].includes(op)) return;
     try {
       if (op === 'extract') { if (data.facts.length && !confirm(tr('confirmFacts'))) return; data.facts = splitFacts(data.source, data.sourceLanguage); clearApprovals(); }
-      if (op === 'sample') { if (data.facts.length && !confirm(tr('confirmSample'))) return; data.sourceLanguage = 'zh'; data.facts = clone(SAMPLE_FACTS); data.source = SAMPLE_FACTS.map(f => f.zh).join('\n'); clearApprovals(); }
+      if (op === 'sample') {
+        if ((data.source || data.facts.length || data.cv.company || data.cv.role || data.cv.jd) && !confirm(tr('confirmSample'))) return;
+        const language = Object.hasOwn(LANGUAGES, getLanguage()) ? getLanguage() : 'en';
+        const role = jobs.find(j => j.title === 'Product Designer' && j.company === 'Forma Studio');
+        data.sourceLanguage = language; data.facts = clone(SAMPLE_FACTS); data.source = SAMPLE_FACTS.map(f => f[language]).join('\n');
+        data.cv = { task: 'tailor', company: 'Forma Studio', role: role ? getJobTitle(role) : 'Product Designer', jd: role ? [role.summary, ...role.requirements].join('\n') : 'Design thoughtful digital products with Figma, prototyping, user research and design systems. Collaborate across Hong Kong and Shenzhen. Bring 3+ years of product design experience and a portfolio.', language, engine: 'local' };
+        clearApprovals();
+      }
       if (op === 'add-fact') { if (data.facts.length >= 40) throw new Error('Use up to 40 facts.'); data.facts.push({ id: crypto.randomUUID(), kind: 'experience', en: '', zh: '', tw: '', approved: false }); clearApprovals(); }
       if (op === 'remove-fact') { data.facts = data.facts.filter(f => f.id !== button.dataset.id); clearApprovals(); }
       if (op === 'generate') {
@@ -186,10 +193,10 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
       if (op === 'profile-from-candidate') { const p = getCandidate(); data.talent.name = p.name; const l = data.talent.selectedLanguage; data.talent.locales[l].headline = p.headline; data.talent.locales[l].approved = false; invalidateProfile(); }
       if (op === 'sample-profile') {
         if (data.talent.name && !confirm(tr('confirmProfile'))) return;
-        data.talent = { ...initial().talent, name: 'Alex Chen', city: 'Shenzhen ↔ Hong Kong', skills: 'Figma · Research · Prototyping', contact: 'alex.chen@example.com', locales: {
-          en: { headline: 'Product designer exploring cross-border teams', about: 'I enjoy turning research into clear, thoughtful digital experiences. I am interested in product design opportunities in Hong Kong and Shenzhen. Let’s talk about your team before I share a tailored CV.', approved: false },
-          zh: { headline: '产品设计师，期待加入跨境团队', about: '我喜欢将研究转化为清晰、细致的数字体验，正在了解香港和深圳的产品设计机会。欢迎先聊聊团队和职位，再分享定制简历。', approved: false },
-          tw: { headline: '產品設計師，期待加入跨境團隊', about: '我喜歡將研究轉化為清晰、細緻的數位體驗，正在了解香港和深圳的產品設計機會。歡迎先聊聊團隊和職位，再分享量身調整的履歷。', approved: false }
+        data.talent = { ...initial().talent, name: 'Alex Chen', city: 'Shenzhen ↔ Hong Kong', selectedLanguage: Object.hasOwn(LANGUAGES, getLanguage()) ? getLanguage() : 'en', skills: 'Figma · User research · Prototyping · Design systems', contact: 'alex.chen@example.com', locales: {
+          en: { headline: 'Product designer exploring cross-border teams', about: 'From 2022 to 2025, I designed digital products at a Shenzhen software studio. With a team of 4, I redesigned onboarding; completion increased by 18% in an internal test. I work with Figma, user interviews and design systems. I’m exploring product design teams in Hong Kong and Shenzhen. Let’s talk about your team before I share a tailored CV.', approved: false },
+          zh: { headline: '产品设计师，期待加入跨境团队', about: '2022年至2025年，我在深圳一家软件工作室设计数字产品。我与4人团队重新设计入门流程，内部测试中完成率提高了18%。我使用 Figma，开展用户访谈，并参与设计系统工作。目前正在了解香港和深圳的产品设计团队。欢迎先聊聊团队和职位，再分享定制简历。', approved: false },
+          tw: { headline: '產品設計師，期待加入跨境團隊', about: '2022年至2025年，我在深圳一家軟體工作室設計數位產品。我與4人團隊重新設計入門流程，內部測試中完成率提高了18%。我使用 Figma，進行使用者訪談，並參與設計系統工作。目前正在了解香港和深圳的產品設計團隊。歡迎先聊聊團隊和職位，再分享量身調整的履歷。', approved: false }
         } }; invalidateProfile();
       }
       if (op === 'translate-profile') {

@@ -72,3 +72,11 @@ Work-status questions distinguish admission permission from professional certifi
 - `across/tests/career.test.mjs`: approval, evidence, provider contract, privacy and HTTP tests.
 
 Account-specific hosting configuration, credentials and local artifacts are excluded from Git. The Jobsdb reference informed familiar recruitment interactions; Across uses original styling and synthetic content.
+
+## Screenshot demo cases
+
+Use **Load CV demo case** in CV studio for fictional Alex Chen, a product designer applying to Forma Studio. It loads five facts with prewritten English/Simplified/Traditional Chinese wording and fills the company, role and JD. The selected interface language becomes the initial source/output language. All facts start unapproved: review them, create a local draft, and approve the final version to show the export controls. No AI key is needed; this uses exact approved wording, not a live AI translation.
+
+Use **Load profile demo case** in Share my profile for the matching introduction in three languages. Review each version you want to share, keep contact excluded unless deliberately selected, then review the public snapshot and approve its creation. The profile example includes a fictional 18% onboarding result from an internal test, matching the CV facts. Example contacts use example.com.
+
+Both loaders ask before replacing existing input. Saved CV versions are retained but invalidated for renewed review when the facts change. For clean screenshots without altering your personal workspace, use a separate browser origin/profile. The feature interiors use Across green; the AI workspace cards retain their distinct navigation accents.

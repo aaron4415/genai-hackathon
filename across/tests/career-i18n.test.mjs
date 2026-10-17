@@ -91,3 +91,27 @@ test('a generated snapshot link survives interface switches with localized shari
     assert.ok(translated.includes('已確認的語言版本'));
   } finally { w.restore(); globalThis.location=oldLocation; }
 });
+
+test('demo loaders prepare local scenarios in the chosen language without granting approvals', () => {
+  for (const language of ['en','zh','tw']) {
+    const w=workspace();
+    try {
+      w.setLanguage(language);w.click('sample');
+      const cv=JSON.parse(w.stored());
+      assert.equal(cv.sourceLanguage,language);assert.equal(cv.cv.language,language);
+      assert.equal(cv.cv.company,'Forma Studio');assert.equal(cv.cv.engine,'local');assert.ok(cv.cv.jd);
+      assert.equal(cv.facts.length,5);assert.ok(cv.facts.every(f=>!f.approved));assert.equal(cv.drafts.length,0);
+      assert.equal(cv.source,cv.facts.map(f=>f[language]).join('\n'));
+      w.click('sample-profile');const profile=JSON.parse(w.stored()).talent;
+      assert.equal(profile.name,'Alex Chen');assert.equal(profile.selectedLanguage,language);assert.equal(profile.showContact,false);
+      assert.ok(Object.values(profile.locales).every(locale=>!locale.approved && locale.about.includes('18%')));
+    } finally {w.restore()}
+  }
+});
+test('declining a demo replacement preserves the current workspace', () => {
+  const w=workspace({facts:[],drafts:[],source:'My private notes',cv:{company:'My company'},talent:{name:'My name',locales:{}}});
+  const oldConfirm=globalThis.confirm;let confirmations=0;
+  globalThis.confirm=()=>{confirmations++;return false};
+  try {const before=w.stored();w.click('sample');w.click('sample-profile');assert.equal(confirmations,2);assert.equal(w.stored(),before)}
+  finally {globalThis.confirm=oldConfirm;w.restore()}
+});

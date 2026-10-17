@@ -117,16 +117,17 @@ dialog{border:1px solid #dde6d4;border-radius:17px;box-shadow:0 30px 100px #1b30
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
 /* Feature names and actions share a distinct, readable accent. */
-.feature-card[data-feature-card="cv"],[data-feature-screen="cv"]{--feature-accent:#2764a0;--feature-tint:#eaf2fb}
-.feature-card[data-feature-card="marketing"],[data-feature-screen="marketing"]{--feature-accent:#8c4274;--feature-tint:#faedf5}
-.feature-card[data-feature-card="profile"],[data-feature-screen="talent-profile"]{--feature-accent:#237461;--feature-tint:#e8f5ef}
-.feature-card[data-feature-card="agent"],[data-feature-screen="agent"]{--feature-accent:#9a5b20;--feature-tint:#fff2e4}
+.feature-card[data-feature-card="cv"]{--feature-accent:#2764a0;--feature-tint:#eaf2fb}
+.feature-card[data-feature-card="marketing"]{--feature-accent:#8c4274;--feature-tint:#faedf5}
+.feature-card[data-feature-card="profile"]{--feature-accent:#237461;--feature-tint:#e8f5ef}
+.feature-card[data-feature-card="agent"]{--feature-accent:#9a5b20;--feature-tint:#fff2e4}
 .feature-card[data-feature-card] h2,.feature-card[data-feature-card] .text-btn{color:var(--feature-accent)}
 .feature-card[data-feature-card] .feature-icon{color:var(--feature-accent);background:var(--feature-tint)}
 .feature-card[data-feature-card] .text-btn:hover{text-decoration:underline;text-underline-offset:4px}
 .feature-card[data-feature-card] .text-btn:focus-visible{outline:2px solid var(--feature-accent);outline-offset:4px;border-radius:3px}
 
-/* Carry each feature's accent into its own workspace. */
+/* Feature interiors use the shared Across green palette. */
+:is([data-feature-screen="cv"],[data-feature-screen="talent-profile"],[data-feature-screen="marketing"],[data-feature-screen="agent"]){--feature-accent:var(--green);--feature-tint:#eff4e9;--feature-border:#d9e2d2}
 :is([data-feature-screen="cv"],[data-feature-screen="talent-profile"]) .page-heading :is(h1,.eyebrow){color:var(--feature-accent)}
 :is([data-feature-screen="cv"],[data-feature-screen="talent-profile"],[data-feature-screen="agent"]) .btn-primary{background:var(--feature-accent);color:#fff}
 :is([data-feature-screen="cv"],[data-feature-screen="talent-profile"]) .btn-outline{color:var(--feature-accent);border-color:var(--feature-accent)}
@@ -137,7 +138,7 @@ dialog{border:1px solid #dde6d4;border-radius:17px;box-shadow:0 30px 100px #1b30
 .marketing-section .marketing-lang button.active{color:var(--feature-accent)}
 .marketing-section .marketing-lang button.active:after{background:var(--feature-accent)}
 .apply-portal .apply-portal-hero :is(h1,.eyebrow),.apply-portal .apply-role h2,.apply-portal .apply-form-head h2{color:var(--feature-accent)}
-.apply-portal .apply-agent-card{background:var(--feature-tint);border-color:#e4c9aa}
+.apply-portal .apply-agent-card{background:var(--feature-tint);border-color:var(--feature-border)}
 .apply-portal .apply-agent-card :is(strong,.agent-icon),.apply-portal .agent-trace-head :is(h3,.agent-icon){color:var(--feature-accent)}
-.apply-portal .agent-trace-list li[data-status="active"]{border-color:var(--feature-accent);background:var(--feature-tint);color:var(--feature-accent);box-shadow:0 3px 12px #9a5b2018}
+.apply-portal .agent-trace-list li[data-status="active"]{border-color:var(--feature-accent);background:var(--feature-tint);color:var(--feature-accent);box-shadow:0 3px 12px #24574618}
 .apply-portal .agent-trace-list li[data-status="active"] .agent-step-marker{border-color:var(--feature-accent);background:var(--feature-accent)}
