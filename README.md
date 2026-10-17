@@ -55,7 +55,7 @@ A `127.0.0.1`/`localhost` link works only on that computer. Share links work acr
 
 ## Existing demos
 
-Explore/search/filter jobs, save opportunities, edit the candidate profile and create browser-local employer job drafts. Employer marketing uses editable templates for six channels in three languages. The application assistant follows a scripted simulation on a local form. No marketing content is published and no job application is sent to an employer. The core discovery interface and job titles support three languages; longer descriptions and much of the editor interface remain English with Chinese guidance.
+Explore/search/filter jobs, save opportunities, edit the candidate profile and create browser-local employer job drafts. Employer marketing uses editable templates for six channels in three languages. The application assistant follows a scripted simulation on a local form. No marketing content is published and no job application is sent to an employer. The core discovery interface, CV studio and Share my profile editors follow the app's English, Simplified Chinese or Traditional Chinese interface selector. CV output, source facts and profile versions keep their independent content-language choices; changing the interface never translates or modifies candidate text. Some longer job descriptions and existing employer demos remain English.
 
 Demo and career workspaces use separate keys in this browser's local storage. **Reset demo** clears both; exported CVs and copies of snapshot links remain outside that reset. Use fictional data when demonstrating on a shared computer.
 
@@ -65,6 +65,7 @@ Work-status questions distinguish admission permission from professional certifi
 
 - `across/dist/`: static app and deployable share-profile viewer.
 - `across/dist/career-ui.js`: candidate fact review, draft review/export and profile editor.
+- `across/dist/career-i18n.js`: interface translations and localized validation messages for the career editors.
 - `across/dist/career-core.js`: shared validation, local drafting and snapshot serialization.
 - `across/career-ai.mjs`: structured CV tailoring/translation and profile translation.
 - `across/server.mjs`: local preview and validated AI endpoints.
