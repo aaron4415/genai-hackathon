@@ -1,2 +1,5 @@
 # Account-specific hosting configuration stays on this workstation.
 /across/.openai/hosting.json
+.env
+.env.*
+!.env.example

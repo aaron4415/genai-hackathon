@@ -1,42 +1,73 @@
 # Across
 
-A frontend recruitment prototype connecting Hong Kong and Shenzhen in both directions. All jobs, companies and candidate profiles are fictional.
+A Hong Kong ↔ Shenzhen recruitment prototype with candidate-reviewed CV editing and multilingual profile sharing. All built-in jobs, companies and candidate examples are fictional.
 
 ## Run locally
 
-Requires Node.js 18 or newer. No dependency installation, database, API key or build step is required.
+Use Node.js 22 or newer. No dependency installation or build step is required.
 
 ```powershell
 cd across
-npm run dev
+node server.mjs
 ```
 
-Open `http://127.0.0.1:4173`. To check JavaScript syntax, run `npm run check` from the same directory.
+Open `http://127.0.0.1:4173`. `npm run dev` is equivalent when npm is available. On Windows, `Start-Across.cmd` also starts the preview. Keep the server running while using it.
 
-On Windows, you can also double-click `Start-Across.cmd` and keep its console open while using the demo.
+```powershell
+npm run check
+npm test
+```
 
-## Try the demo
+Without npm, run `node --test tests/career.test.mjs` from `across/`. The server listens on loopback only. Public hosting and authentication are separate deployment work.
 
-- Explore jobs in both cities; search by title, skill or company; filter by discipline and work arrangement.
-- Open a role, save it, and try the explicitly simulated application flow.
-- Edit the candidate profile and destination-specific work-status questions.
-- Switch to the employer workspace and create a browser-local job draft.
-- Explore official-source cross-border guidance and the four future AI concepts.
-- Switch English, Simplified Chinese and Traditional Chinese for the core discovery interface and job titles. Other screens and longer job descriptions currently use English.
+## CV studio
 
-Demo changes use this browser's local storage. Reset demo clears that local activity. Nothing is sent to employers, and no files are uploaded. Do not enter real sensitive information into the demo.
+Open **AI workspace → Open CV studio**, or use the sidebar.
 
-## Deferred features
+1. Paste a CV, import a `.txt` file, or describe education, work, projects and skills in everyday language, one fact per line. For PDF/Word documents, paste their text. Choose English, Simplified Chinese or Traditional Chinese as the source language.
+2. Review and categorize each fact. Each approval covers all wording entered for that fact. Facts begin unapproved; editing them removes approval. The bilingual example is fictional.
+3. Add a company, role and JD, or choose a fictional sample JD. Choose **Tailor** or **Translate only**, then the output language.
+4. Create a review draft. Review the source references and questions about missing requirements. Final candidate approval is required before downloading text or using **Print / Save PDF**. Keep up to 12 separate company/language versions and delete individual old versions when needed.
 
-CV editing / Chinese-to-English JD adaptation, employer marketing generation, multilingual public talent profiles, and an application agent are concept previews only. There are no AI calls, account authentication, real application submissions, document checks, or backend services.
+**Local mode** organizes the exact approved wording already supplied in the selected language; it does not invent translations or perform semantic tailoring. The bilingual example lets you try this flow without credentials. **AI mode** rewrites supported experience for the JD or translates between Chinese and English. Translation-only mode must preserve every approved fact. The server checks source IDs and rejects newly introduced numeric claims. These checks do not prove semantic correctness: the candidate must review every statement and translation. Missing evidence is a review question, never a new qualification. Changing source facts invalidates old draft approvals.
+
+## Enable AI tailoring and translation
+
+Copy `across/.env.example` to `across/.env`, set `OPENAI_API_KEY` there, and restart the server. Node.js 22 loads this optional file. `OPENAI_MODEL` defaults to `gpt-5.4-mini` and can be changed to an available model supporting structured outputs. A key can also be supplied as a server environment variable. Never place credentials in `dist/`, a share URL or Git.
+
+The implementation calls the OpenAI Responses API with strict structured output and `store: false`. No live model calls are made until the candidate explicitly consents in the app. CV calls send only the approved facts, company, role, JD and output language; they do not send the original pasted CV, default email or private work-status answers. Profile translation sends only the approved source headline and introduction. Provider retention rules still apply; `store: false` is not a promise of zero provider retention. See [structured output documentation](https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses).
+
+A missing key, provider error, refusal or timeout is shown explicitly. There is no fake AI fallback after a failed request. The local editor remains usable. Tests mock provider responses; live translation quality needs verification with a configured key.
+
+The local API validates origin and host, caps request bodies, limits concurrent calls and rate limits requests. Do not expose a key-backed endpoint publicly without authentication, user quotas and a deployment review. `APP_ORIGIN` is an exact allowed reverse-proxy origin, not an authentication mechanism.
+
+## Multilingual talent profile
+
+Open **AI workspace → Create my share profile**, or **Share my profile** in the sidebar.
+
+- Write a display name, headline and introduction in English, Simplified Chinese and/or Traditional Chinese. Edit manually or use AI to draft all three language versions from an approved source. Each language needs its own candidate approval.
+- Choose whether city, skills and a contact method are public. Contact is excluded by default. The editor never automatically copies a CV, default email, source facts or work-authorisation answers into the share link. Candidates should review free text for anything they do not want public.
+- Review the exact public snapshot, approve sharing, then create a link. Recipients see a standalone profile and can switch between approved language versions. They can use the included contact method to discuss the role and request a CV; there is no built-in messaging inbox.
+
+The link is a self-contained snapshot in the URL fragment. The recipient does not need the candidate's browser storage or an account. The snapshot is not encrypted or identity-verified: anyone with the link can decode, edit or copy it. New editor changes need a new link; an old link cannot be revoked or updated. Viewer expiry (7/30/90 days) does not delete copied text. The profile data is not stored in a server database.
+
+A `127.0.0.1`/`localhost` link works only on that computer. Share links work across devices when the static app is deployed to a reachable host; pushing to GitHub alone does not deploy it. Long snapshot links are intended for direct sharing; shortened URLs, QR codes and revocable hosted profile pages are future work.
+
+## Existing demos
+
+Explore/search/filter jobs, save opportunities, edit the candidate profile and create browser-local employer job drafts. Employer marketing uses editable templates for six channels in three languages. The application assistant follows a scripted simulation on a local form. No marketing content is published and no job application is sent to an employer. The core discovery interface and job titles support three languages; longer descriptions and much of the editor interface remain English with Chinese guidance.
+
+Demo and career workspaces use separate keys in this browser's local storage. **Reset demo** clears both; exported CVs and copies of snapshot links remain outside that reset. Use fictional data when demonstrating on a shared computer.
 
 Work-status questions distinguish admission permission from professional certificates. Official sources for IANG, ASMTP, TTPS and Mainland employment guidance are linked in the app; summaries were checked on 17 October 2026. The prototype does not determine eligibility or verify documents.
 
 ## Structure
 
-- `across/dist/` — deployable static HTML, CSS, JavaScript and SVG favicon.
-- `across/server.mjs` — small local preview server; not a production backend.
+- `across/dist/`: static app and deployable share-profile viewer.
+- `across/dist/career-ui.js`: candidate fact review, draft review/export and profile editor.
+- `across/dist/career-core.js`: shared validation, local drafting and snapshot serialization.
+- `across/career-ai.mjs`: structured CV tailoring/translation and profile translation.
+- `across/server.mjs`: local preview and validated AI endpoints.
+- `across/tests/career.test.mjs`: approval, evidence, provider contract, privacy and HTTP tests.
 
-Account-specific hosting configuration and local screenshots are excluded from Git.
-
-The Jobsdb reference informed familiar recruitment interactions. Across uses original styling and synthetic content; no vacancies, logos or proprietary assets were copied.
+Account-specific hosting configuration, credentials and local artifacts are excluded from Git. The Jobsdb reference informed familiar recruitment interactions; Across uses original styling and synthetic content.
