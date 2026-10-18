@@ -1,3 +1,4 @@
+import { workspaceHeader, workspaceText } from './workspace-ui.js';
 import { careerText, languageName, localizeKnownText, localizeCareerError } from './career-i18n.js';
 import { LANGUAGES, FACT_KINDS, SAMPLE_FACTS, splitFacts, localCv, validateCvOutput, encodeProfile, decodeProfile, cvAsText } from './career-core.js';
 
@@ -22,7 +23,7 @@ function download(text, filename, type = 'text/plain;charset=utf-8') {
 
 export function createCareerWorkspace({ navigate, refresh, getView, getCandidate, getLanguage = () => 'en', getJobTitle = j => j.title, jobs, toast, closeModal }) {
   let data = restore(), status = null, error = '', busy = false, selectedDraft = data.drafts[0]?.id, publicLanguage = 'en', publicToken = '', publicProfile = null;
-  let reviewSnapshot = null;
+  let reviewSnapshot = null, profileEditorOpen=false, profileSharingOpen=false;
   let previewLanguage = data.talent.selectedLanguage;
   let generatedShareLink = '';
   const tr = (key, params) => careerText(key,getLanguage(),params);
@@ -101,11 +102,12 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
     return `<div class="profile-preview-heading"><div><span class="eyebrow">${tr('previewEyebrow')}</span><h2>${tr('livePreview')}</h2></div><span class="profile-live-dot">${tr('live')}</span></div><div class="profile-language-tabs" role="group" aria-label="${tr('previewLanguage')}">${Object.keys(LANGUAGES).map(l=>`<button data-preview-language="${l}" aria-pressed="${l===previewLanguage}" class="${l===previewLanguage?'active':''}"><span>${langName(l)}</span><i class="${data.talent.locales[l].approved?'approved':''}" aria-label="${tr(data.talent.locales[l].approved?'approved':'pending')}"></i></button>`).join('')}</div><div class="profile-preview-stage">${preview.name&&active?.headline.trim()?profileCard({...preview,locales:{[previewLanguage]:{headline:active.headline,about:active.about}}},previewLanguage,true):`<div class="profile-preview-empty"><span aria-hidden="true">◎</span><h3>${langName(previewLanguage)}</h3><p>${tr('emptyLanguage')}</p><button class="btn btn-outline" data-career="sample-profile">${tr('loadProfile')}</button></div>`}</div><div class="profile-preview-caption"><span>◉ ${tr('previewOnly')}</span><span>${Object.values(data.talent.locales).filter(l=>l.approved).length} / 3 ${tr('approvedLanguages')}</span></div><p class="career-help">${tr('previewHelp')}</p>`;
   }
   function refreshPreview() { const region=document.querySelector('[data-profile-preview]');if(region)region.innerHTML=profilePreview(); }
-  function talentProfilePage() {
+  function talentProfilePage({withHeading=true}={}) {
     const t = data.talent, lang = t.selectedLanguage, l = t.locales[lang];
-    return `${header(tr('profileEyebrow'), tr('profileTitle'), tr('profileDescription'))}
+    const wt=key=>workspaceText(key,getLanguage());
+    return `${withHeading?workspaceHeader('profile',getLanguage()):''}<div class="profile-workspace-top"><span>${wt('candidateView')}</span><button class="btn btn-outline" data-career="sample-profile">${wt('loadExample')} ↗</button></div>
       <div class="career-status">${aiStatus()}<span>${tr('privateProfile')}</span></div>${message()}
-      <div class="career-workbench profile-workbench"><div><section class="panel"><h2>${tr('introduction')}</h2><p>${tr('introductionHelp')}</p>
+      <div class="profile-workbench"><div class="profile-main-canvas"><div class="career-profile-preview" data-profile-preview>${profilePreview()}</div><details class="profile-editor" ${profileEditorOpen?'open':''}><summary><span><strong>${wt('editProfile')}</strong><small>${wt('editHelp')}</small></span><b aria-hidden="true">+</b></summary><div class="career-workbench profile-editor-grid"><section class="panel"><h2>${tr('introduction')}</h2><p>${tr('introductionHelp')}</p>
         <label class="field">${tr('displayName')}<input maxlength="80" data-talent="name" value="${esc(t.name)}"></label>
         <div class="form-grid"><label class="field">${tr('city')}<input data-talent="city" maxlength="80" value="${esc(t.city)}"></label><label class="field">${tr('skillsInterests')}<input data-talent="skills" maxlength="400" value="${esc(t.skills)}"></label></div>
         <label class="field">${tr('contactMethod')}<input data-talent="contact" maxlength="200" value="${esc(t.contact)}" placeholder="${esc(tr('contactPlaceholder'))}"></label>
@@ -116,14 +118,14 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
         <label class="check-field"><input type="checkbox" data-profile-approved ${l.approved ? 'checked' : ''}><span>${tr('profileConsent',{language:langName(lang)})}</span></label>
         <p class="career-help">${Object.entries(t.locales).map(([key, value]) => `${langName(key)}: ${value.approved ? tr('approved') : tr('pending')}`).join(' · ')}</p>
         ${aiConsent('profile-ai-consent')}<button class="btn btn-outline" data-career="translate-profile" ${busy || !status?.configured ? 'disabled' : ''}>${busy ? tr('translating') : tr('translateProfile')}</button><p class="career-help">${tr('profileAiHelp')}</p>
-      </section><section class="panel"><h2>${tr('choosePublic')}</h2>
+      </section></div></details><details class="profile-share-settings" ${profileSharingOpen||reviewSnapshot||generatedShareLink?'open':''}><summary><span><strong>${wt('shareSettings')}</strong><small>${wt('shareHelp')}</small></span><b aria-hidden="true">+</b></summary><section class="panel"><h2>${tr('choosePublic')}</h2>
         ${[['showCity', tr('includeCity')], ['showSkills', tr('includeSkills')], ['showContact', tr('includeContact')]].map(([key, text]) => `<label class="check-field"><input type="checkbox" data-talent-toggle="${key}" ${t[key] ? 'checked' : ''}><span>${text}</span></label>`).join('')}
         <label class="field">${tr('expiry')}<select data-talent="expiry">${['7', '30', '90'].map(days => `<option value="${days}" ${t.expiry === days ? 'selected' : ''}>${tr('days',{days})}</option>`).join('')}</select></label>
         <p class="career-help">${tr('snapshotHelp')}</p>
         <button class="btn btn-primary full" data-career="review-share">${tr('reviewSnapshot')}</button>
         ${reviewSnapshot ? `<div class="career-share-review"><h3>${tr('exactSnapshot')}</h3>${profileCard(reviewSnapshot,Object.keys(reviewSnapshot.locales)[0],true)}<p>${tr('publicLanguages')} ${Object.keys(reviewSnapshot.locales).map(l => langName(l)).join(' · ')}</p><p>${tr('includes')} ${[tr('displayName'),tr('approvedLanguages'),reviewSnapshot.city&&tr('city'),reviewSnapshot.skills&&tr('skills'),reviewSnapshot.contact&&tr('contact')].filter(Boolean).join(' · ')}.</p><label class="check-field"><input id="public-share-consent" type="checkbox"><span>${tr('shareConsent')}</span></label><button class="btn btn-primary" data-career="create-link">${tr('createLink')}</button></div>` : ''}
         <div id="career-share-result" aria-live="polite">${shareResult()}</div>
-      </section></div><div class="career-profile-preview" data-profile-preview>${profilePreview()}</div></div>`;
+      </section></details></div></div>`;
   }
   function publicPage() {
     if (!publicProfile) return `<section class="panel"><h1>${tr('profileUnavailable')}</h1><p>${esc(error ? localizeCareerError(error,getLanguage()) : tr('invalidProfile'))}</p><button class="btn btn-outline" data-view="tools">${tr('openAcross')}</button></section>`;
@@ -233,6 +235,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
       persist(); repaint();
     } catch (e) { busy = false; error = e.message; repaint(); }
   }
+  document.addEventListener('toggle',e=>{if(e.target.matches?.('.profile-editor'))profileEditorOpen=e.target.open;if(e.target.matches?.('.profile-share-settings'))profileSharingOpen=e.target.open;},true);
   document.addEventListener('click', e => { const previewButton=e.target.closest('[data-preview-language]');if(previewButton?.dataset.previewLanguage){previewLanguage=previewButton.dataset.previewLanguage;refreshPreview();document.querySelector(`[data-preview-language="${previewLanguage}"]`)?.focus({preventScroll:true});return;} const button = e.target.closest('[data-career]'); if (button) { e.preventDefault(); void action(button); } });
   document.addEventListener('input', e => {
     const el = e.target;

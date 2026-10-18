@@ -139,7 +139,7 @@ test('an empty preview language shows its empty state instead of another languag
   try {
     w.career.setPreviewLanguage('tw');
     const html=w.career.talentProfilePage();
-    const preview=html.slice(html.indexOf('data-profile-preview'));
+    const preview=html.slice(html.indexOf('class="profile-preview-stage"'),html.indexOf('class="profile-preview-caption"'));
     assert.ok(preview.includes('profile-preview-empty'));
     assert.ok(!preview.includes('English only headline'));
     assert.ok(html.includes('English only headline'));

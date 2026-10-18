@@ -84,7 +84,7 @@ Both loaders ask before replacing existing input. Saved CV versions are retained
 
 ## Side-panel agent demo
 
-Open **AI workspace → CV studio** or **CV studio** in the sidebar for the main presentation case. A shared Across agent panel switches between CV, profile, marketing and application workspaces. All new chat responses are scripted, accept suggested prompts or supported typed requests, and require no API key. Conversations and the fictional CV artifact last for the current page visit; they do not modify real CV facts or approvals. Existing full CV editing remains available through **Open full CV studio**.
+Open **AI workspace → CV studio** or **CV studio** in the sidebar for the main presentation case. The Across agent appears beside each tool. Candidate and employer tools live in separate workspaces. All new chat responses are scripted, accept suggested prompts or supported typed requests, and require no API key. Conversations and the fictional CV artifact last for the current page visit; they do not modify real CV facts or approvals. Existing full CV editing remains available through **Open full CV studio**.
 
 Suggested demo sequence:
 
@@ -93,4 +93,26 @@ Suggested demo sequence:
 3. **Marketing:** open Marketing copilot, choose an opportunity, then ask for LinkedIn, Xiaohongshu or recruiter email. The agent selects and highlights the corresponding editable template. Six channels and three content languages remain available. Nothing is published.
 4. **Application:** open Application copilot and select a fictional role. A simulated company careers site appears on the left; candidate information and chat appear on the right. Ask the agent to fill the local form. It copies the saved name, email and exact self-reported work status, adds an editable introduction, and pauses. Current location must be chosen by the candidate; destination preference is not used as current location. Stop cancels pending filling steps. Review fields, choose consent, then **Save demo application** to create a local record. No real site is controlled and no application leaves the browser.
 
-The chat shell follows the interface language; content-language selectors remain independent. Smaller screens stack the chat above the document/form. New demo implementation is in `across/dist/agent-demo.js` and `agent-demo.css`.
+The chat shell follows the interface language; content-language selectors remain independent. Smaller screens keep the document/form first and provide a floating shortcut to the chat below. New demo implementation is in `across/dist/agent-demo.js` and `agent-demo.css`.
+
+
+## Frontend workspace design
+
+The frontend separates candidate and employer navigation, with a larger artifact canvas and a contextual copilot alongside. All copilot messages remain scripted; no new model or API setup is needed.
+
+- **CV studio:** switch between CV preview, source evidence and role brief. Compare original and working draft without changing review status; rewriting or changing the document language requires renewed review. The full editor remains available.
+- **Your profile:** the recipient preview leads the page, with independent language tabs. Expand **Edit introduction & languages** or **Review sharing settings** when needed. Editor expansion survives language changes. Loading fictional examples still asks before replacing existing content; sharing approvals remain required.
+- **Campaign studio:** choose one channel at a time. Agent suggestions open that channel. Content-language selection and saved edits survive channel changes; copy/reset controls remain local.
+- **Application desk:** choose a fictional role, expand its details if needed, and prepare the visible form. Progress moves from preparation to candidate review. The agent never selects location/consent or sends a real application.
+
+The responsive layout and new shared copy are in `across/dist/workspace.css` and `workspace-ui.js`. Below 1100px the canvas stacks before the chat, with a **Chat with your copilot** shortcut. New client fixtures exercise local UI state without a browser, network or user storage. They are not visual or browser end-to-end tests.
+
+
+## Candidate and employer workspaces
+
+Open `#candidate` for the candidate dashboard or `#employer` for the employer dashboard. Use the workspace switch in the top bar, or the **Candidate / Employer** switch in the candidate sidebar. Candidates keep their sidebar; employers use a full-width workspace with horizontal navigation for overview, jobs, campaigns, talent, tools and the guide. Each role has its own home page and tools list.
+
+- Candidate: discover/saved jobs, CV studio, multilingual share profile, application desk, saved applications and personal details. Example routes: `#candidate/cv`, `#candidate/profile`, `#candidate/apply`.
+- Employer: hiring overview, job posts, campaign studio and talent previews. Example routes: `#employer/jobs`, `#employer/marketing`, `#employer/talent`. Job previews offer campaign tools rather than candidate apply/save actions.
+
+Old links such as `#cv-demo`, `#marketing` and `#apply` normalize to the correct workspace. Scoped routes do not open another role's tool; for example `#employer/apply` returns to the employer dashboard. Browser history uses the same route resolver. Shared public `#profile=...` links remain standalone. Changing workspace keeps existing CV/demo state and saved edits; it does not replace user content. This is a frontend separation, without accounts or role-based server authorization.
