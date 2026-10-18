@@ -23,6 +23,7 @@ function download(text, filename, type = 'text/plain;charset=utf-8') {
 export function createCareerWorkspace({ navigate, refresh, getView, getCandidate, getLanguage = () => 'en', getJobTitle = j => j.title, jobs, toast, closeModal }) {
   let data = restore(), status = null, error = '', busy = false, selectedDraft = data.drafts[0]?.id, publicLanguage = 'en', publicToken = '', publicProfile = null;
   let reviewSnapshot = null;
+  let previewLanguage = data.talent.selectedLanguage;
   let generatedShareLink = '';
   const tr = (key, params) => careerText(key,getLanguage(),params);
   const langName = language => languageName(language,getLanguage());
@@ -82,8 +83,8 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
   }
   function profileCard(p, language, preview = false) {
  const locale=p.locales[language]||Object.values(p.locales)[0];
- const ct=(key,params)=>careerText(key,preview?getLanguage():language,params);
- return `<article class="public-talent-card" lang="${language==='zh'?'zh-Hans':language==='tw'?'zh-Hant':'en'}"><div class="public-talent-cover"><span class="tag">${ct(preview?'privatePreview':'openConversation')}</span><span>across.</span></div><div class="public-talent-body"><div class="public-avatar">${esc(p.name.slice(0,1))}</div><h1>${esc(p.name)}</h1><p class="public-headline">${esc(locale.headline)}</p>${p.city?`<p class="muted">${esc(p.city)}</p>`:''}<h2>${ct('aboutMe')}</h2><p class="public-about">${esc(locale.about)}</p>${p.skills?`<h2>${ct('skillsInterests')}</h2><p>${esc(p.skills)}</p>`:''}${p.contact?`<section class="public-contact"><h2>${ct('connect')}</h2><p>${esc(p.contact)}</p><small>${ct('requestCv')}</small></section>`:`<section class="public-contact"><p>${ct('noContact')}</p></section>`}<p class="career-help">${ct('profileFootnote',{date:esc(new Date(p.expiresAt).toISOString().slice(0,10))})}</p></div></article>`;
+ const ct=(key,params)=>careerText(key,language,params);
+ return `<article class="public-talent-card" lang="${language==='zh'?'zh-Hans':language==='tw'?'zh-Hant':'en'}"><div class="public-talent-cover"><span class="tag">${ct(preview?'privatePreview':'openConversation')}</span><span>across.</span></div><div class="public-talent-body"><div class="public-avatar">${esc(p.name.slice(0,1))}</div><h1>${esc(p.name)}</h1><p class="public-headline">${esc(locale.headline)}</p>${p.city?`<p class="muted">${esc(p.city)}</p>`:''}<h2>${ct('aboutMe')}</h2><p class="public-about">${esc(locale.about)}</p>${p.skills?`<h2>${ct('skillsInterests')}</h2><div class="profile-skill-pills">${p.skills.split(/[,，·]/).map(s=>s.trim()).filter(Boolean).map(s=>`<span>${esc(s)}</span>`).join('')}</div>`:''}${p.contact?`<section class="public-contact"><h2>${ct('connect')}</h2><p>${esc(p.contact)}</p><small>${ct('requestCv')}</small></section>`:`<section class="public-contact"><p>${ct('noContact')}</p></section>`}<p class="career-help">${ct('profileFootnote',{date:esc(new Date(p.expiresAt).toISOString().slice(0,10))})}</p></div></article>`;
   }
   function selectedProfile(strict = false) {
     const t = data.talent;
@@ -95,12 +96,16 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
     const link=generatedShareLink;
     return `<label class="field">${tr('shareLink')}<input readonly id="career-share-link" value="${esc(link)}"></label><div class="career-actions"><button class="btn btn-outline" data-career="copy-share">${tr('copyLink')}</button><a class="btn btn-primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${tr('openProfile')}</a><button class="text-btn" data-career="download-profile">${tr('downloadLink')}</button></div><p class="career-help">${tr('linkNote')}</p>`;
   }
+  function profilePreview() {
+    const preview=selectedProfile(), active=data.talent.locales[previewLanguage];
+    return `<div class="profile-preview-heading"><div><span class="eyebrow">${tr('previewEyebrow')}</span><h2>${tr('livePreview')}</h2></div><span class="profile-live-dot">${tr('live')}</span></div><div class="profile-language-tabs" role="group" aria-label="${tr('previewLanguage')}">${Object.keys(LANGUAGES).map(l=>`<button data-preview-language="${l}" aria-pressed="${l===previewLanguage}" class="${l===previewLanguage?'active':''}"><span>${langName(l)}</span><i class="${data.talent.locales[l].approved?'approved':''}" aria-label="${tr(data.talent.locales[l].approved?'approved':'pending')}"></i></button>`).join('')}</div><div class="profile-preview-stage">${preview.name&&active?.headline.trim()?profileCard({...preview,locales:{[previewLanguage]:{headline:active.headline,about:active.about}}},previewLanguage,true):`<div class="profile-preview-empty"><span aria-hidden="true">◎</span><h3>${langName(previewLanguage)}</h3><p>${tr('emptyLanguage')}</p><button class="btn btn-outline" data-career="sample-profile">${tr('loadProfile')}</button></div>`}</div><div class="profile-preview-caption"><span>◉ ${tr('previewOnly')}</span><span>${Object.values(data.talent.locales).filter(l=>l.approved).length} / 3 ${tr('approvedLanguages')}</span></div><p class="career-help">${tr('previewHelp')}</p>`;
+  }
+  function refreshPreview() { const region=document.querySelector('[data-profile-preview]');if(region)region.innerHTML=profilePreview(); }
   function talentProfilePage() {
     const t = data.talent, lang = t.selectedLanguage, l = t.locales[lang];
-    const preview = selectedProfile();
     return `${header(tr('profileEyebrow'), tr('profileTitle'), tr('profileDescription'))}
       <div class="career-status">${aiStatus()}<span>${tr('privateProfile')}</span></div>${message()}
-      <div class="career-workbench"><div><section class="panel"><h2>${tr('introduction')}</h2><p>${tr('introductionHelp')}</p>
+      <div class="career-workbench profile-workbench"><div><section class="panel"><h2>${tr('introduction')}</h2><p>${tr('introductionHelp')}</p>
         <label class="field">${tr('displayName')}<input maxlength="80" data-talent="name" value="${esc(t.name)}"></label>
         <div class="form-grid"><label class="field">${tr('city')}<input data-talent="city" maxlength="80" value="${esc(t.city)}"></label><label class="field">${tr('skillsInterests')}<input data-talent="skills" maxlength="400" value="${esc(t.skills)}"></label></div>
         <label class="field">${tr('contactMethod')}<input data-talent="contact" maxlength="200" value="${esc(t.contact)}" placeholder="${esc(tr('contactPlaceholder'))}"></label>
@@ -118,7 +123,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
         <button class="btn btn-primary full" data-career="review-share">${tr('reviewSnapshot')}</button>
         ${reviewSnapshot ? `<div class="career-share-review"><h3>${tr('exactSnapshot')}</h3>${profileCard(reviewSnapshot,Object.keys(reviewSnapshot.locales)[0],true)}<p>${tr('publicLanguages')} ${Object.keys(reviewSnapshot.locales).map(l => langName(l)).join(' · ')}</p><p>${tr('includes')} ${[tr('displayName'),tr('approvedLanguages'),reviewSnapshot.city&&tr('city'),reviewSnapshot.skills&&tr('skills'),reviewSnapshot.contact&&tr('contact')].filter(Boolean).join(' · ')}.</p><label class="check-field"><input id="public-share-consent" type="checkbox"><span>${tr('shareConsent')}</span></label><button class="btn btn-primary" data-career="create-link">${tr('createLink')}</button></div>` : ''}
         <div id="career-share-result" aria-live="polite">${shareResult()}</div>
-      </section></div><div class="career-profile-preview"><h2>${tr('livePreview')}</h2>${preview.name && Object.keys(preview.locales).length ? profileCard(preview, lang, true) : `<div class="panel career-empty">${tr('emptyProfile')}</div>`}<p class="career-help">${tr('previewHelp')}</p></div></div>`;
+      </section></div><div class="career-profile-preview" data-profile-preview>${profilePreview()}</div></div>`;
   }
   function publicPage() {
     if (!publicProfile) return `<section class="panel"><h1>${tr('profileUnavailable')}</h1><p>${esc(error ? localizeCareerError(error,getLanguage()) : tr('invalidProfile'))}</p><button class="btn btn-outline" data-view="tools">${tr('openAcross')}</button></section>`;
@@ -228,7 +233,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
       persist(); repaint();
     } catch (e) { busy = false; error = e.message; repaint(); }
   }
-  document.addEventListener('click', e => { const button = e.target.closest('[data-career]'); if (button) { e.preventDefault(); void action(button); } });
+  document.addEventListener('click', e => { const previewButton=e.target.closest('[data-preview-language]');if(previewButton?.dataset.previewLanguage){previewLanguage=previewButton.dataset.previewLanguage;refreshPreview();document.querySelector(`[data-preview-language="${previewLanguage}"]`)?.focus({preventScroll:true});return;} const button = e.target.closest('[data-career]'); if (button) { e.preventDefault(); void action(button); } });
   document.addEventListener('input', e => {
     const el = e.target;
     if (el.matches('[data-career-source]')) { data.source = el.value; persist(); }
@@ -254,6 +259,7 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
     }
     if (el.matches('[data-talent]')) { data.talent[el.dataset.talent] = el.value; invalidateProfile(); document.querySelector('.career-share-review')?.remove(); document.querySelector('#career-share-result')?.replaceChildren(); persist(); }
     if (el.matches('[data-profile-text]')) { const locale = data.talent.locales[data.talent.selectedLanguage]; locale[el.dataset.profileText] = el.value; locale.approved = false; invalidateProfile(); const check = document.querySelector('[data-profile-approved]'); if (check) check.checked = false; document.querySelector('.career-share-review')?.remove(); document.querySelector('#career-share-result')?.replaceChildren(); persist(); }
+    if(el.matches('[data-talent],[data-profile-text]'))refreshPreview();
   });
   document.addEventListener('change', async e => {
     const el = e.target;
@@ -277,5 +283,5 @@ export function createCareerWorkspace({ navigate, refresh, getView, getCandidate
     if (el.matches('[data-public-language]')) { publicLanguage = el.value; repaint(); }
   });
   const featureText=(feature,field)=>{const keys={cv:{name:'cvTitle',body:'cvCard',action:'cvAction'},profile:{name:'profileTitle',body:'profileCard',action:'profileAction'}};return keys[feature.id]?.[field]?tr(keys[feature.id][field]):feature[field]};
-  return { featureText, cvPage, talentProfilePage, publicPage, open, openShared, clear: () => { data = initial(); reviewSnapshot = null; generatedShareLink = ''; persist(); } };
+  return { setPreviewLanguage: language => { if(Object.hasOwn(LANGUAGES,language)){previewLanguage=language;refreshPreview();} }, featureText, cvPage, talentProfilePage, publicPage, open, openShared, clear: () => { data = initial(); reviewSnapshot = null; generatedShareLink = ''; persist(); } };
 }

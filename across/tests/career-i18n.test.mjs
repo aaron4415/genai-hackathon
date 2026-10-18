@@ -115,3 +115,34 @@ test('declining a demo replacement preserves the current workspace', () => {
   try {const before=w.stored();w.click('sample');w.click('sample-profile');assert.equal(confirmations,2);assert.equal(w.stored(),before)}
   finally {globalThis.confirm=oldConfirm;w.restore()}
 });
+
+
+test('preview language switches independently without changing editing language, approvals or stored text', () => {
+  const w=workspace();
+  try {
+    w.click('sample-profile');
+    const before=w.stored();
+    w.career.setPreviewLanguage('tw');
+    const html=w.career.talentProfilePage();
+    assert.match(html,/data-preview-language="tw" aria-pressed="true"/);
+    assert.ok(html.includes('產品設計師，期待加入跨境團隊'));
+    assert.ok(html.includes('Product designer exploring cross-border teams'));
+    assert.equal(w.stored(),before);
+    w.career.setPreviewLanguage('zh');
+    assert.ok(w.career.talentProfilePage().includes('产品设计师，期待加入跨境团队'));
+    assert.equal(w.stored(),before);
+  } finally {w.restore();}
+});
+
+test('an empty preview language shows its empty state instead of another language’s content', () => {
+  const w=workspace({facts:[],drafts:[],cv:{},talent:{name:'Fictional candidate',selectedLanguage:'en',locales:{en:{headline:'English only headline',about:'English only bio',approved:true}}}});
+  try {
+    w.career.setPreviewLanguage('tw');
+    const html=w.career.talentProfilePage();
+    const preview=html.slice(html.indexOf('data-profile-preview'));
+    assert.ok(preview.includes('profile-preview-empty'));
+    assert.ok(!preview.includes('English only headline'));
+    assert.ok(html.includes('English only headline'));
+    assert.ok(html.includes('data-profile-approved checked'));
+  } finally {w.restore();}
+});

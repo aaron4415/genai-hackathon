@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:06,000
+Meet Alex, a fictional designer exploring a role in Hong Kong.
+
+2
+00:00:06,000 --> 00:00:18,000
+The agent reads the role and asks for evidence before rewriting.
+
+3
+00:00:18,000 --> 00:00:31,000
+Alex reviews the evidence-linked draft and keeps the internal-test qualifier.
+
+4
+00:00:31,000 --> 00:00:45,000
+Switch the recipient preview without changing the facts or public fields.
+
+5
+00:00:45,000 --> 00:00:59,000
+The employer reviews channel-specific drafts with the original job terms intact.
+
+6
+00:00:59,000 --> 00:01:14,000
+The ideal assistant fills the company form, then waits for candidate review.
+
+7
+00:01:14,000 --> 00:01:24,000
+Across connects candidate and employer workflows with review at every handoff.

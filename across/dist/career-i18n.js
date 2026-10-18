@@ -1,5 +1,10 @@
 // Interface copy only. Candidate facts, CV output and profile text retain their chosen content language.
 export const CAREER_COPY = {
+  previewEyebrow: ['YOUR STORY, ACROSS BORDERS', '让你的故事跨越边界', '讓你的故事跨越邊界'],
+  previewLanguage: ['Preview language', '预览语言', '預覽語言'],
+  live: ['LIVE', '实时', '即時'],
+  emptyLanguage: ['Add an introduction in this language, or load the fictional demo to explore all three versions.', '添加此语言的介绍，或载入虚构演示以体验三种语言。', '加入此語言的介紹，或載入虛構示範以體驗三種語言。'],
+  previewOnly: ['Private preview', '私人预览', '私人預覽'],
   cvDemoHelp: ['Fictional demo: Alex Chen, product designer → Forma Studio. Loads five facts, prewritten translations and a sample JD. Review the facts, then create a local draft.', '虚构演示：产品设计师 Alex Chen 申请 Forma Studio。载入五项事实、预先编写的译文和示例职位描述。确认事实后即可生成本地草稿。', '虛構示範：產品設計師 Alex Chen 申請 Forma Studio。載入五項事實、預先撰寫的譯文及範例職位描述。確認事實後即可產生本機草稿。'],
   profileDemoHelp: ['Fictional demo: Alex Chen’s introduction, with prewritten English and Chinese versions. Review each language before sharing. Contact is excluded by default.', '虚构演示：Alex Chen 的自我介绍，包含预先编写的中英文版本。分享前请确认各语言措辞。默认不分享联系方式。', '虛構示範：Alex Chen 的自我介紹，包含預先撰寫的中英文版本。分享前請確認各語言措辭。預設不分享聯絡方式。'],
   cvTitle: ['CV studio', '简历工作室', '履歷工作室'],

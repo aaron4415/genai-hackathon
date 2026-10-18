@@ -1,0 +1,386 @@
+{
+  "schemaVersion": 1,
+  "project": "Across",
+  "title": "Across: an ideal cross-border career journey",
+  "durationSeconds": 84,
+  "format": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "mode": "ideal-product-concept",
+  "fictional": true,
+  "disclosure": "Fictional demo data. Ideal product concept, not a recording of the current app. No real publishing or applications.",
+  "candidate": {
+    "id": "alex-chen",
+    "name": "Alex Chen",
+    "initials": "AC",
+    "role": "Product Designer",
+    "currentCity": "Shenzhen",
+    "targetCity": "Hong Kong",
+    "email": "alex.chen@example.com",
+    "workStatus": "To be discussed; not verified",
+    "education": "BSc Computer Science, 2022",
+    "skills": [
+      "Figma",
+      "User research",
+      "Prototyping",
+      "Design systems"
+    ],
+    "facts": [
+      {
+        "id": "experience",
+        "label": "Experience",
+        "text": "Product Designer at Northline Digital, Shenzhen, September 2022 to August 2025.",
+        "source": "CV / work history"
+      },
+      {
+        "id": "onboarding",
+        "label": "Measured outcome",
+        "text": "Redesigned onboarding with a team of four. Completion increased by 18% in an internal usability test.",
+        "source": "CV / onboarding project",
+        "qualifier": "Internal test; not a production-wide result."
+      },
+      {
+        "id": "research",
+        "label": "Research",
+        "text": "Conducted six user interviews for the onboarding redesign and turned findings into prototype iterations.",
+        "source": "Candidate answer / project details"
+      },
+      {
+        "id": "tools",
+        "label": "Design tools",
+        "text": "Figma, interactive prototyping, user interviews and design systems.",
+        "source": "CV / skills"
+      },
+      {
+        "id": "education",
+        "label": "Education",
+        "text": "BSc in Computer Science, 2022.",
+        "source": "CV / education"
+      },
+      {
+        "id": "languages",
+        "label": "Languages",
+        "text": "Mandarin: native. English: professional working proficiency.",
+        "source": "Candidate profile"
+      },
+      {
+        "id": "portfolio",
+        "label": "Portfolio",
+        "text": "Candidate-approved demo portfolio: alexchen.example.com/onboarding.",
+        "source": "Candidate answer / portfolio",
+        "url": "https://alexchen.example.com/onboarding"
+      }
+    ],
+    "rawCv": "Product Designer, Northline Digital, Shenzhen, Sep 2022–Aug 2025. Onboarding redesign with a team of four. Completion +18% in an internal usability test. Figma, prototyping, user interviews, design systems. BSc Computer Science (2022). Mandarin native; English professional.",
+    "profileLocales": {
+      "en": {
+        "name": "English",
+        "headline": "Product designer connecting research with better onboarding",
+        "about": "I am a Shenzhen-based product designer with three years at Northline Digital. With a team of four, I redesigned onboarding and improved completion by 18% in an internal test. I work with Figma, user interviews and design systems, and I am exploring product teams in Hong Kong and Shenzhen.",
+        "approved": true
+      },
+      "zh": {
+        "name": "简体中文",
+        "headline": "产品设计师，用用户研究优化入门体验",
+        "about": "我是一名在深圳工作的产品设计师，拥有三年 Northline Digital 工作经验。我与四人团队重新设计入门流程，内部测试中完成率提高了18%。我使用 Figma、用户访谈与设计系统，正在了解香港和深圳的产品团队。",
+        "approved": true
+      },
+      "tw": {
+        "name": "繁體中文",
+        "headline": "產品設計師，以使用者研究改善入門體驗",
+        "about": "我是一名在深圳工作的產品設計師，擁有三年 Northline Digital 工作經驗。我與四人團隊重新設計入門流程，內部測試中完成率提高了18%。我使用 Figma、使用者訪談與設計系統，正在了解香港和深圳的產品團隊。",
+        "approved": true
+      }
+    },
+    "publicFields": [
+      "name",
+      "headline",
+      "about",
+      "city",
+      "skills"
+    ],
+    "excludedPublicFields": [
+      "email",
+      "workStatus",
+      "fullCv"
+    ]
+  },
+  "employer": {
+    "id": "forma-studio",
+    "company": "Forma Studio",
+    "recruiter": "Mei Wong",
+    "recruiterRole": "Talent Partner",
+    "fictional": true
+  },
+  "job": {
+    "id": "forma-product-designer",
+    "company": "Forma Studio",
+    "title": "Product Designer",
+    "city": "Hong Kong",
+    "area": "Quarry Bay",
+    "workStyle": "Hybrid",
+    "salary": "HK$32,000–45,000 / month",
+    "currency": "HKD",
+    "responsibilities": [
+      "Design onboarding and product workflows.",
+      "Plan user research and turn findings into prototypes.",
+      "Collaborate with engineering across Hong Kong and Shenzhen."
+    ],
+    "requirements": [
+      {
+        "text": "Three years of product design experience",
+        "factIds": [
+          "experience"
+        ],
+        "status": "Evidence supplied"
+      },
+      {
+        "text": "Figma, research and prototyping",
+        "factIds": [
+          "tools",
+          "research"
+        ],
+        "status": "Evidence supplied"
+      },
+      {
+        "text": "A portfolio with shipped work",
+        "factIds": [
+          "portfolio"
+        ],
+        "status": "Portfolio link supplied; work samples need review"
+      },
+      {
+        "text": "English collaboration; Mandarin is useful",
+        "factIds": [
+          "languages"
+        ],
+        "status": "Self-reported; discuss with candidate"
+      }
+    ],
+    "benefits": [
+      "Three office days and two remote days each week.",
+      "Twenty days of annual leave.",
+      "Cross-border team visits with expenses covered."
+    ],
+    "permission": "Work permission and any employer support must be discussed and verified separately."
+  },
+  "cv": {
+    "version": "AlexChen_Forma_ProductDesigner_EN_demo",
+    "language": "en",
+    "summary": "Product designer with three years of experience in research, prototyping and design systems, exploring a cross-border product team.",
+    "selectedAchievement": "Redesigned onboarding with a four-person team, using six interviews to guide prototype iterations. Completion increased by 18% in an internal test.",
+    "sourceFactIds": [
+      "experience",
+      "tools",
+      "onboarding",
+      "research"
+    ],
+    "candidateReview": "Required in the scripted sequence"
+  },
+  "marketing": {
+    "linkedin": {
+      "language": "en",
+      "headline": "We are hiring a Product Designer",
+      "body": "Join Forma Studio in Hong Kong. Design onboarding and product workflows with a collaborative Hong Kong–Shenzhen team. HK$32,000–45,000 per month. Hybrid: three office days, two remote days. Bring three years of design experience, research and prototyping skills, and a portfolio for review.",
+      "status": "Employer review required"
+    },
+    "xiaohongshu": {
+      "language": "zh",
+      "headline": "下一站，香港产品设计团队",
+      "body": "Forma Studio 正在招聘产品设计师。\n📍 香港鲗鱼涌 · 混合办公\n💰 每月 HK$32,000–45,000\n每周三天办公室、两天远程。参与入门体验设计、用户研究与原型迭代。需要三年产品设计经验，并提供作品集供评估。\n先了解团队与职位，再决定下一步。",
+      "status": "Employer review required"
+    }
+  },
+  "application": {
+    "portalHost": "careers.formastudio.example",
+    "name": "Alex Chen",
+    "email": "alex.chen@example.com",
+    "location": "Shenzhen",
+    "workStatus": "To be discussed; not verified",
+    "cv": "AlexChen_Forma_ProductDesigner_EN_demo.pdf",
+    "introduction": "Hello Forma Studio team, I am interested in your Product Designer role. My experience spans user research, Figma prototypes and onboarding design. I would welcome a conversation about the team and the role.",
+    "requiresCandidateConfirmation": true,
+    "submission": "Simulated only"
+  },
+  "scenes": [
+    {
+      "id": "opening",
+      "start": 0,
+      "duration": 6,
+      "feature": "Overview",
+      "title": "One story. Across borders.",
+      "caption": "Meet Alex, a fictional designer exploring a role in Hong Kong.",
+      "screen": "Candidate and opportunity introduced together."
+    },
+    {
+      "id": "cv-brief",
+      "start": 6,
+      "duration": 12,
+      "feature": "CV copilot",
+      "title": "A CV built through conversation",
+      "caption": "The agent reads the role and asks for evidence before rewriting.",
+      "screen": "CV and job brief on the left. Agent asks about an onboarding project.",
+      "chat": [
+        {
+          "who": "candidate",
+          "text": "Tailor my CV for Forma Studio’s Product Designer role."
+        },
+        {
+          "who": "agent",
+          "text": "How was the onboarding result measured?"
+        },
+        {
+          "who": "candidate",
+          "text": "An internal test: +18% completion. Team of four, six interviews."
+        }
+      ]
+    },
+    {
+      "id": "cv-evidence",
+      "start": 18,
+      "duration": 13,
+      "feature": "CV copilot",
+      "title": "Stronger wording. Traceable facts.",
+      "caption": "Alex reviews the evidence-linked draft and keeps the internal-test qualifier.",
+      "screen": "Before/after CV lines, source references and candidate review.",
+      "draft": "Redesigned onboarding with a four-person team, using six interviews to guide prototype iterations. Completion increased by 18% in an internal test.",
+      "factIds": [
+        "onboarding",
+        "research"
+      ],
+      "chat": [
+        {
+          "who": "agent",
+          "text": "I kept the result qualified as an internal test. Review the source-linked draft before exporting."
+        },
+        {
+          "who": "candidate",
+          "text": "That accurately describes my work. Approve this demo version."
+        }
+      ]
+    },
+    {
+      "id": "profile",
+      "start": 31,
+      "duration": 14,
+      "feature": "Multilingual profile",
+      "title": "The same person. Three languages.",
+      "caption": "Switch the recipient preview without changing the facts or public fields.",
+      "screen": "English, Simplified Chinese and Traditional Chinese profile previews; contact stays private.",
+      "languageCues": [
+        {
+          "at": 31,
+          "language": "en"
+        },
+        {
+          "at": 36,
+          "language": "zh"
+        },
+        {
+          "at": 40,
+          "language": "tw"
+        }
+      ],
+      "chat": [
+        {
+          "who": "candidate",
+          "text": "Create a short profile employers can read before I share my CV."
+        },
+        {
+          "who": "agent",
+          "text": "Here are three versions for review. Contact details are excluded from the public preview."
+        }
+      ]
+    },
+    {
+      "id": "marketing",
+      "start": 45,
+      "duration": 14,
+      "feature": "Marketing copilot",
+      "title": "One role. The right voice for each channel.",
+      "caption": "The employer reviews channel-specific drafts with the original job terms intact.",
+      "screen": "LinkedIn and Xiaohongshu campaign drafts for the same selected role.",
+      "chat": [
+        {
+          "who": "employer",
+          "text": "Help us explain this role to product designers in Hong Kong and Shenzhen."
+        },
+        {
+          "who": "agent",
+          "text": "I’ll adapt the tone for both channels and keep salary, work style and requirements unchanged."
+        }
+      ]
+    },
+    {
+      "id": "application",
+      "start": 59,
+      "duration": 15,
+      "feature": "Application copilot",
+      "title": "The agent prepares. Alex decides.",
+      "caption": "The ideal assistant fills the company form, then waits for candidate review.",
+      "screen": "Simulated official-style careers portal on the left; candidate information and agent on the right.",
+      "events": [
+        {
+          "at": 61,
+          "action": "fill-name"
+        },
+        {
+          "at": 62,
+          "action": "fill-email"
+        },
+        {
+          "at": 63,
+          "action": "fill-location"
+        },
+        {
+          "at": 64,
+          "action": "attach-reviewed-demo-cv"
+        },
+        {
+          "at": 66,
+          "action": "pause-for-review"
+        },
+        {
+          "at": 70,
+          "action": "candidate-confirms-demo-only"
+        },
+        {
+          "at": 72,
+          "action": "show-simulated-confirmation"
+        }
+      ],
+      "chat": [
+        {
+          "who": "candidate",
+          "text": "Prepare my application using the CV I just reviewed."
+        },
+        {
+          "who": "agent",
+          "text": "The form is prepared. Please check the details and work-status answer. I will wait for your confirmation."
+        }
+      ],
+      "confirmation": "Demo application prepared and confirmed. No real employer receives it."
+    },
+    {
+      "id": "closing",
+      "start": 74,
+      "duration": 10,
+      "feature": "Overview",
+      "title": "Your experience, understood.",
+      "caption": "Across connects candidate and employer workflows with review at every handoff.",
+      "screen": "Four feature names and end card.",
+      "disclosure": "Ideal product concept with fictional data. Some flows go beyond the current prototype. No real messages, posts or applications are sent."
+    }
+  ],
+  "guardrails": [
+    "All people, companies, jobs and outcomes in this dataset are fictional.",
+    "Do not present concept scenes as current production functionality.",
+    "Preserve the internal-test qualifier beside the 18% result.",
+    "No candidate qualification, immigration or work-permission decision.",
+    "Public profile excludes email, work-status answer and full CV.",
+    "Campaign drafts need employer review; the demo never publishes.",
+    "Application is simulated and pauses for candidate confirmation."
+  ]
+}

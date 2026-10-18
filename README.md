@@ -22,7 +22,7 @@ Without npm, run `node --test tests/career.test.mjs` from `across/`. The server 
 
 ## CV studio
 
-Open **AI workspace → Open CV studio**, or use the sidebar.
+Open **CV studio**, then **Open full CV studio** to use your own information. The main CV entry opens the scripted chat demo described below.
 
 1. Paste a CV, import a `.txt` file, or describe education, work, projects and skills in everyday language, one fact per line. For PDF/Word documents, paste their text. Choose English, Simplified Chinese or Traditional Chinese as the source language.
 2. Review and categorize each fact. Each approval covers all wording entered for that fact. Facts begin unapproved; editing them removes approval. The bilingual example is fictional.
@@ -80,3 +80,17 @@ Use **Load CV demo case** in CV studio for fictional Alex Chen, a product design
 Use **Load profile demo case** in Share my profile for the matching introduction in three languages. Review each version you want to share, keep contact excluded unless deliberately selected, then review the public snapshot and approve its creation. The profile example includes a fictional 18% onboarding result from an internal test, matching the CV facts. Example contacts use example.com.
 
 Both loaders ask before replacing existing input. Saved CV versions are retained but invalidated for renewed review when the facts change. For clean screenshots without altering your personal workspace, use a separate browser origin/profile. The feature interiors use Across green; the AI workspace cards retain their distinct navigation accents.
+
+
+## Side-panel agent demo
+
+Open **AI workspace → CV studio** or **CV studio** in the sidebar for the main presentation case. A shared Across agent panel switches between CV, profile, marketing and application workspaces. All new chat responses are scripted, accept suggested prompts or supported typed requests, and require no API key. Conversations and the fictional CV artifact last for the current page visit; they do not modify real CV facts or approvals. Existing full CV editing remains available through **Open full CV studio**.
+
+Suggested demo sequence:
+
+1. **CV:** choose **Tailor my CV for this role**, then **Emphasise my achievements**. The fictional Alex Chen CV changes beside the chat, using the existing five sample facts. Try the prewritten Traditional Chinese version, review it, or restart the conversation.
+2. **Profile:** open Profile copilot, load the fictional profile example, and switch the preview's English / Simplified Chinese / Traditional Chinese tabs. These are independent of the editing language and do not grant approval. Empty versions show an empty state. Edits update the preview as you type; sharing still requires the existing language and snapshot approvals.
+3. **Marketing:** open Marketing copilot, choose an opportunity, then ask for LinkedIn, Xiaohongshu or recruiter email. The agent selects and highlights the corresponding editable template. Six channels and three content languages remain available. Nothing is published.
+4. **Application:** open Application copilot and select a fictional role. A simulated company careers site appears on the left; candidate information and chat appear on the right. Ask the agent to fill the local form. It copies the saved name, email and exact self-reported work status, adds an editable introduction, and pauses. Current location must be chosen by the candidate; destination preference is not used as current location. Stop cancels pending filling steps. Review fields, choose consent, then **Save demo application** to create a local record. No real site is controlled and no application leaves the browser.
+
+The chat shell follows the interface language; content-language selectors remain independent. Smaller screens stack the chat above the document/form. New demo implementation is in `across/dist/agent-demo.js` and `agent-demo.css`.

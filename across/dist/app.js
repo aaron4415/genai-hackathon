@@ -1,3 +1,4 @@
+import { createAgentDemo } from './agent-demo.js';
 import { createCareerWorkspace } from './career-ui.js';
 import { careerText } from './career-i18n.js';
 const icons = {
@@ -72,9 +73,9 @@ function toast(message){const el=document.querySelector('#toast');el.textContent
 function logo(j,large=false){return `<span class="company-logo ${large?'large':''}" style="--logo-bg:${j.bg};--logo-ink:${j.ink}" aria-hidden="true">${j.initial}</span>`}
 function navItem(view,label,i,extra=''){return `<button class="nav-item ${state.view===view?'active':''}" data-view="${view}" ${state.view===view?'aria-current="page"':''}>${icon(i)}<span>${label}</span>${extra}</button>`}
 function skyline(){return `<div class="hero-art" aria-hidden="true"><svg viewBox="0 0 500 250" preserveAspectRatio="xMaxYMax meet"><defs><linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#dce7d3" stop-opacity="0"/><stop offset="1" stop-color="#b7c8a7" stop-opacity=".22"/></linearGradient></defs><circle cx="354" cy="128" r="123" fill="#e1e9d8"/><circle cx="354" cy="128" r="94" fill="none" stroke="#d0ddc3" stroke-dasharray="3 7"/><path d="M20 230Q130 150 250 215T500 180V250H20Z" fill="url(#sky)"/><g fill="#c6d5ba" stroke="#afc39f" stroke-width=".7"><path d="M55 220v-53h23v53m6 0v-67h16v67m9 0v-89l12-15 12 15v89m-13-89v-26m22 115v-43h23v43m13 0V94h13v-25h10v25h12v126m-18-126v126m30 0v-69h22v69m10 0v-96h23v96m8 0v-50h20v50m20 0V116h21v104m-10-104V99m21 121V77l15-20 15 20v143m-15-143v143m24 0v-83h23v83m9 0V92l12-17 12 17v128m7 0v-53h30v53m7 0v-99h25v99"/></g><path d="M0 237h500" stroke="#afc49f"/><path d="M0 227q200 35 500-5" stroke="#c7d5bb" fill="none"/><path d="M134 172Q242 32 368 133" stroke="#8da876" stroke-width="1.2" stroke-dasharray="4 5" fill="none"/><circle cx="134" cy="172" r="5" fill="#eaf0e5" stroke="#89a570"/><circle cx="368" cy="133" r="5" fill="#eaf0e5" stroke="#89a570"/><path d="m242 72 8-4-3 9-1-4z" fill="#89a570"/></svg></div><div class="city-note" aria-hidden="true">HONG KONG <i></i> SHENZHEN</div><div class="city-label" aria-hidden="true">22.3193° N ↔ 22.5431° N</div>`}
-function sidebar(){return `<div class="mobile-scrim" data-action="close-menu"></div><aside class="sidebar" aria-label="${t('mainNavigation')}"><a href="#discover" class="brand" aria-label="Across home"><span class="brandmark">${mark}</span>across<span style="color:#99b18c">.</span></a><div class="brand-sub">${t('brandTagline')}</div><button class="workspace-switch" data-action="switch-workspace">${icon(state.workspace==='candidate'?'user':'briefcase')}<span>${t(state.workspace==='candidate'?'candidate':'employer')}</span>${icon('down')}</button><div class="nav-label">${t('work')}</div><nav>${state.workspace==='candidate'?`${navItem('discover',t('discover'),'grid')}${navItem('saved',t('saved'),'bookmark',state.saved.length?`<span class="count">${state.saved.length}</span>`:'')}${navItem('applications',t('applications'),'briefcase')}${navItem('profile',t('profile'),'user')}${navItem('cv',t('cv'),'document')}${navItem('talent-profile',t('shareProfile'),'globe')}`:`${navItem('employer',t('hiringOverview'),'grid')}${navItem('vacancies',t('jobPosts'),'briefcase')}${navItem('talent',t('talentPreview'),'people')}`}</nav><div class="nav-label" style="margin-top:26px">${t('explore')}</div><nav>${navItem('tools',t('tools'),'sparkle')}${navItem('resources',t('resources'),'book')}</nav><div class="sidebar-bottom"><div class="side-promo">${icon('globe')}<h3>${t('promoTitle')}</h3><p>${t('promoPeople')}<br>${t('promoChapter')}</p><button data-view="resources">${t('aboutAcross')} ${icon('arrow')}</button></div><div class="side-user"><span class="avatar">${esc(initials())}</span><div><strong>${esc(state.profile.name)}</strong><small>${t('personalWorkspace')}</small></div><button aria-label="${t('editProfile')}" data-view="profile">${icon('settings')}</button></div></div></aside>`}
+function sidebar(){return `<div class="mobile-scrim" data-action="close-menu"></div><aside class="sidebar" aria-label="${t('mainNavigation')}"><a href="#discover" class="brand" aria-label="Across home"><span class="brandmark">${mark}</span>across<span style="color:#99b18c">.</span></a><div class="brand-sub">${t('brandTagline')}</div><button class="workspace-switch" data-action="switch-workspace">${icon(state.workspace==='candidate'?'user':'briefcase')}<span>${t(state.workspace==='candidate'?'candidate':'employer')}</span>${icon('down')}</button><div class="nav-label">${t('work')}</div><nav>${state.workspace==='candidate'?`${navItem('discover',t('discover'),'grid')}${navItem('saved',t('saved'),'bookmark',state.saved.length?`<span class="count">${state.saved.length}</span>`:'')}${navItem('applications',t('applications'),'briefcase')}${navItem('profile',t('profile'),'user')}${navItem('cv-demo',t('cv'),'document')}${navItem('talent-profile',t('shareProfile'),'globe')}`:`${navItem('employer',t('hiringOverview'),'grid')}${navItem('vacancies',t('jobPosts'),'briefcase')}${navItem('talent',t('talentPreview'),'people')}`}</nav><div class="nav-label" style="margin-top:26px">${t('explore')}</div><nav>${navItem('tools',t('tools'),'sparkle')}${navItem('resources',t('resources'),'book')}</nav><div class="sidebar-bottom"><div class="side-promo">${icon('globe')}<h3>${t('promoTitle')}</h3><p>${t('promoPeople')}<br>${t('promoChapter')}</p><button data-view="resources">${t('aboutAcross')} ${icon('arrow')}</button></div><div class="side-user"><span class="avatar">${esc(initials())}</span><div><strong>${esc(state.profile.name)}</strong><small>${t('personalWorkspace')}</small></div><button aria-label="${t('editProfile')}" data-view="profile">${icon('settings')}</button></div></div></aside>`}
 function initials(){return state.profile.name.split(' ').filter(Boolean).map(x=>x[0]).slice(0,2).join('').toUpperCase()}
-function topbar(){let name=state.view==='cv'?t('cv'):state.view==='talent-profile'?t('shareProfile'):state.view==='employer'?t('hiringOverview'):state.view==='vacancies'?t('jobPosts'):state.view==='talent'?t('talentPreview'):t(state.view);return `<header class="topbar"><button class="mobile-menu" data-action="menu" aria-label="${t('openNavigation')}" aria-expanded="false">${icon('menu')}</button><div class="breadcrumb"><span>${t('workspace')}</span>${icon('chevron')}<span>${esc(name)}</span></div><div class="top-actions"><span class="demo-pill">${t('interactiveDemo')}</span><label class="sr-only" for="language">${t('interfaceLanguage')}</label><select class="language" id="language"><option value="en" ${state.lang==='en'?'selected':''}>EN</option><option value="zh" ${state.lang==='zh'?'selected':''}>简体中文</option><option value="tw" ${state.lang==='tw'?'selected':''}>繁體中文</option></select><span class="divider"></span><button class="text-btn" data-action="switch-workspace">${t(state.workspace==='candidate'?'hiring':'candidate')} ${icon('external')}</button><button class="avatar" data-view="profile" aria-label="${t('openProfile')}">${esc(initials())}</button></div></header>`}
+function topbar(){let name=state.view==='marketing'?agent.tr('marketing'):['cv','cv-demo'].includes(state.view)?t('cv'):state.view==='talent-profile'?t('shareProfile'):state.view==='employer'?t('hiringOverview'):state.view==='vacancies'?t('jobPosts'):state.view==='talent'?t('talentPreview'):t(state.view);return `<header class="topbar"><button class="mobile-menu" data-action="menu" aria-label="${t('openNavigation')}" aria-expanded="false">${icon('menu')}</button><div class="breadcrumb"><span>${t('workspace')}</span>${icon('chevron')}<span>${esc(name)}</span></div><div class="top-actions"><span class="demo-pill">${t('interactiveDemo')}</span><label class="sr-only" for="language">${t('interfaceLanguage')}</label><select class="language" id="language"><option value="en" ${state.lang==='en'?'selected':''}>EN</option><option value="zh" ${state.lang==='zh'?'selected':''}>简体中文</option><option value="tw" ${state.lang==='tw'?'selected':''}>繁體中文</option></select><span class="divider"></span><button class="text-btn" data-action="switch-workspace">${t(state.workspace==='candidate'?'hiring':'candidate')} ${icon('external')}</button><button class="avatar" data-view="profile" aria-label="${t('openProfile')}">${esc(initials())}</button></div></header>`}
 function footer(){return `<footer class="footer"><span>© 2026 Across · ${t('footer')}</span><div><span>${t('demo')}</span><button class="reset-link" data-action="reset-demo">${t('resetDemo')}</button></div></footer>`}
 function search(){return `<form id="search-form" class="search-box" role="search">${icon('search')}<label for="job-search" class="sr-only">${t('placeholder')}</label><input id="job-search" name="query" value="${esc(state.query)}" placeholder="${t('placeholder')}" autocomplete="off"><span class="shortcut" aria-hidden="true">⌘ K</span><button class="btn btn-primary" type="submit">${t('search')} ${icon('arrow')}</button></form>`}
 function filteredJobs(){return jobs.filter(j=>(state.view!=='saved'||state.saved.includes(j.id))&&(state.city==='both'||j.city===state.city)&&(state.discipline==='all'||j.category===state.discipline)&&(state.mode==='all'||j.mode===state.mode)&&(!state.query||[j.title,j.zh,j.tw,j.company,j.city,j.area,...j.skills].join(' ').toLowerCase().includes(state.query.toLowerCase()))).sort((a,b)=>state.sort==='oldest'?b.days-a.days:a.days-b.days)}
@@ -96,8 +97,33 @@ function toolsPage(){return `${heading('TOOLS FOR YOUR NEXT CHAPTER',t('tools'),
 function resourcesPage(){return `${heading('A LITTLE CLARITY, BEFORE THE LEAP',t('resources'),'Practical starting points for Hong Kong ↔ Shenzhen careers. Go directly to the source.')}<div class="notice" style="margin:0 0 24px">${icon('book')} Official-source summaries · Checked 17 October 2026 · Preliminary information, not an eligibility decision. Your own permission and circumstances determine what applies.</div><div class="resource-grid">${resources.map((r,i)=>`<article class="resource-card"><div class="eyebrow">${i===3?'HONG KONG → MAINLAND':'MAINLAND → HONG KONG'}</div><h2>${r.name}</h2><span class="tag mint">${r.label}</span><p style="margin-top:16px">${r.body}</p><a href="${r.url}" target="_blank" rel="noopener noreferrer">Read the official guidance ${icon('external')}</a></article>`).join('')}</div><section class="panel" style="margin-top:22px"><h2>Bring better questions to the conversation.</h2><ul class="credentials"><li>${icon('document')}<div><strong>Work authorisation and professional qualifications are separate.</strong><small>Ask which permission is held, its current stage and its expiry. Verify role-specific certificates separately.</small></div></li><li>${icon('briefcase')}<div><strong>Compare the whole employment package.</strong><small>Clarify currency, working hours, leave, benefits, work location and any relocation support. This demo does not convert salaries.</small></div></li><li>${icon('people')}<div><strong>Ask about the team's actual working practices.</strong><small>Language, communication style and workplace expectations vary between companies.</small></div></li></ul><button class="btn btn-outline" data-view="profile">Update your work status ${icon('arrow')}</button></section>`}
 function employerPage(postsOnly=false){return `${heading('GREAT TEAMS CROSS BORDERS',postsOnly?'Your job posts':'Find your next great teammate.','A shared workspace for opportunities in Hong Kong and Shenzhen.',`<button class="btn btn-primary" data-action="new-vacancy">${icon('plus')}Create demo job</button>`)}${!postsOnly?`<div class="stats"><section class="stat"><small>DEMO JOB POSTS</small><strong>${2+state.vacancies.length}</strong><p>Across two connected cities</p></section><section class="stat"><small>SAMPLE CANDIDATES</small><strong>03</strong><p>Fictional profiles for demonstration</p></section><section class="stat"><small>MARKETS CONNECTED</small><strong>02</strong><p>Hong Kong ↔ Shenzhen</p></section></div>`:''}<section class="panel"><div class="section-heading"><h2>Your opportunities</h2><span class="tag">Demo company · Forma Studio</span></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Role</th><th>Location</th><th>Work style</th><th>Status</th><th></th></tr></thead><tbody>${jobs.filter(j=>j.company==='Forma Studio').map(j=>`<tr><td><strong>${j.title}</strong><br><small>Full-time · ${j.salary}</small></td><td>${j.city}</td><td>${j.mode}</td><td><span class="status-badge">Sample listing</span></td><td><button class="text-btn" data-job="${j.id}">Preview ${icon('arrow')}</button></td></tr>`).join('')}${state.vacancies.map(v=>`<tr><td><strong>${esc(v.title)}</strong><br><small>${esc(v.salary)}</small></td><td>${esc(v.city)}</td><td>${esc(v.mode)}</td><td><span class="status-badge amber">Local draft</span></td><td><button class="text-btn" data-draft="${esc(v.id)}">Preview ${icon('arrow')}</button></td></tr>`).join('')}</tbody></table></div></section>${!postsOnly?`<div class="feature-grid" style="margin-top:23px"><section class="panel" style="margin:0"><h2>Tell the right story, in either market.</h2><p>Recruitment content that helps candidates understand your role, expectations and team.</p><button class="text-btn" data-feature="marketing" style="margin-top:19px">Preview employer marketing ${icon('arrow')}</button></section><section class="panel" style="margin:0"><h2>Look beyond a familiar CV.</h2><p>Explore a fictional talent preview. Future matching will explain evidence and information gaps.</p><button class="text-btn" data-view="talent" style="margin-top:19px">Explore talent ${icon('arrow')}</button></section></div>`:''}<div class="notice">All listings and candidates here are fictional. New jobs remain browser-local drafts; nothing is published or sent. Employers on either side can use the same workflow.</div>`}
 function talentPage(){return `${heading('PEOPLE, BEYOND THE KEYWORDS','A fresh perspective on talent.','Fictional candidates exploring Hong Kong and Shenzhen. No ranking or eligibility decisions.')}<div class="feature-grid">${[{name:'Jamie Wong',role:'Frontend Engineer',from:'Hong Kong',to:'Shenzhen',skills:'React · TypeScript · Accessibility',initial:'JW'},{name:'Lin Xu',role:'Product Designer',from:'Shenzhen',to:'Hong Kong',skills:'Figma · Research · Design systems',initial:'LX'},{name:'Sam Lee',role:'Data Analyst',from:'Hong Kong',to:'Both cities',skills:'SQL · Python · Experimentation',initial:'SL'}].map(p=>`<section class="feature-card"><span class="avatar" style="height:48px;width:48px;margin-bottom:19px">${p.initial}</span><h2>${p.name}</h2><p>${p.role}<br>${p.from} → ${p.to}<br>${p.skills}</p><button class="text-btn" data-action="talent-preview">Profile preview ${icon('arrow')}</button></section>`).join('')}</div><div class="notice">Sample profiles are not real people. Create your own multilingual share profile from AI workspace. These sample candidates are fictional; there is no employer messaging inbox.</div>`}
-function render(){document.querySelector('.skip-link').textContent=t('skipContent');const views={cv:()=>career.cvPage(),'talent-profile':()=>career.talentProfilePage(),discover,saved:savedPage,applications:applicationsPage,profile:profilePage,tools:toolsPage,resources:resourcesPage,employer:()=>employerPage(),vacancies:()=>employerPage(true),talent:talentPage};document.documentElement.lang=state.lang==='zh'?'zh-Hans':state.lang==='tw'?'zh-Hant':'en';const titleView=state.view==='cv'?t('cv'):state.view==='talent-profile'?t('shareProfile'):state.view==='employer'?'Employer workspace':state.view==='apply'?'Apply on company site':t(state.view);document.title=`Across — ${titleView}`;const root=document.querySelector('#app');if(state.view==='shared-profile'){document.title='Across — Talent profile';root.innerHTML=career.publicPage();return}if(state.view==='apply'&&state.applyTarget){const j=jobs.find(x=>x.id===state.applyTarget);if(j){root.innerHTML=state.applySuccess?applyPortalSuccess(j):applyPortalPage(j);return}state.applyTarget=null}root.innerHTML=`${sidebar()}<div class="shell">${topbar()}<main id="main" class="content" data-feature-screen="${esc(state.view)}" tabindex="-1">${(views[state.view] || discover)()}${footer()}</main></div>`}
-function navigate(view){const allowed=['discover','saved','applications','profile','tools','resources','employer','vacancies','talent','apply','cv','talent-profile','shared-profile'];if(!allowed.includes(view))view='discover';state.view=view;if(['employer','vacancies','talent'].includes(view))state.workspace='employer';if(['discover','saved','applications','profile','cv','talent-profile'].includes(view))state.workspace='candidate';if(view==='apply'){}else{state.query='';state.city='both';state.discipline='all';state.mode='all';state.expanded=false;}history.replaceState(null,'',`#${view}`);render();window.scrollTo({top:0});document.querySelector('#main')?.focus({preventScroll:true})}
+function marketingPage(){
+ const posts=[...jobs.filter(j=>j.company==='Forma Studio').map(j=>postForMarketing(j,false)),...state.vacancies.map(v=>postForMarketing(v,true))];
+ const selected=posts.find(p=>p.id===state.marketingTarget)||posts[0];
+ state.marketingTarget=selected.id;
+ return `${heading('ACROSS / '+agent.tr('marketing'),agent.tr('marketingTitle'),agent.tr('marketingSub'))}<div class="agent-layout"><section class="agent-artifact"><section class="panel"><label class="field">${agent.tr('role')}<select data-marketing-workspace-job>${posts.map(p=>`<option value="${esc(p.id)}" ${p.id===selected.id?'selected':''}>${esc(p.title)} · ${esc(p.company)}</option>`).join('')}</select></label></section>${marketingSectionHtml(selected,state.lang)}</section>${agent.rail('marketing')}</div>`;
+}
+function render(){
+ document.querySelector('.skip-link').textContent=t('skipContent');
+ const views={cv:()=>career.cvPage(),'cv-demo':()=>agent.cvPage(),marketing:marketingPage,'talent-profile':()=>`<div class="agent-layout profile-agent-layout"><div>${career.talentProfilePage()}</div>${agent.rail('profile')}</div>`,discover,saved:savedPage,applications:applicationsPage,profile:profilePage,tools:toolsPage,resources:resourcesPage,employer:()=>employerPage(),vacancies:()=>employerPage(true),talent:talentPage};
+ document.documentElement.lang=state.lang==='zh'?'zh-Hans':state.lang==='tw'?'zh-Hant':'en';
+ const titleView=['cv','cv-demo'].includes(state.view)?t('cv'):state.view==='marketing'?agent.tr('marketing'):state.view==='talent-profile'?t('shareProfile'):state.view==='employer'?'Employer workspace':state.view==='apply'?'Application demo':t(state.view);
+ document.title=`Across — ${titleView}`;
+ const root=document.querySelector('#app');
+ if(state.view==='shared-profile'){document.title='Across — Talent profile';root.innerHTML=career.publicPage();return;}
+ if(state.view==='apply'&&state.applyTarget){const j=jobs.find(x=>x.id===state.applyTarget);if(j){root.innerHTML=`<div class="application-demo-layout"><div class="application-browser"><div class="portal-browser-bar"><span aria-hidden="true">● ● ●</span><strong>▣ careers.${esc(j.company.toLowerCase().replace(/[^a-z0-9]/g,''))}.example / apply</strong><small>${agent.tr('portal')}</small></div>${state.applySuccess?applyPortalSuccess(j):applyPortalPage(j)}</div>${agent.rail('apply')}</div>`;return;}state.applyTarget=null;}
+ root.innerHTML=`${sidebar()}<div class="shell">${topbar()}<main id="main" class="content" data-feature-screen="${esc(state.view)}" tabindex="-1">${(views[state.view] || discover)()}${footer()}</main></div>`;
+}
+function navigate(view){
+ const allowed=['discover','saved','applications','profile','tools','resources','employer','vacancies','talent','apply','cv','cv-demo','marketing','talent-profile','shared-profile'];
+ if(!allowed.includes(view))view='discover';
+ if(state.view!==view)state.agentRunning=false;
+ state.view=view;
+ if(['employer','vacancies','talent','marketing'].includes(view))state.workspace='employer';
+ if(['discover','saved','applications','profile','cv','cv-demo','talent-profile'].includes(view))state.workspace='candidate';
+ if(view!=='apply'){state.query='';state.city='both';state.discipline='all';state.mode='all';state.expanded=false;}
+ history.replaceState(null,'',`#${view}`);render();window.scrollTo({top:0});document.querySelector('#main')?.focus({preventScroll:true});
+}
 const modal=document.querySelector('#modal');
 
 // === Employer marketing pipeline =========================================
@@ -289,23 +315,11 @@ function openDialog(name,body,drawer=false,actions=''){modal.className=drawer?'d
 
 // === Apply portal (full-page external-style careers site) ==============
 function agentStepsFor(j,profile){
- const jobTitle=title(j);
- const firstName=(profile.name||'').split(' ')[0]||'there';
  return [
-  {id:'load-profile',label:'Reading your saved profile',detail:`${esc(profile.name||'You')} · ${esc(profile.headline||'profile')}`,dur:520},
-  {id:'scan-form',label:'Scanning the form on this careers portal',detail:`Mapped 6 input fields, 1 consent checkbox, 1 submit button`,dur:380},
-  {id:'read-jd',label:`Reading the "${esc(jobTitle)}" job description for context`,detail:`Picking up keywords + cross-border signals`,dur:720},
-  {id:'type-name',label:'Filling in your name',detail:`Typing "${esc(profile.name||'')}" character by character`,dur:520,field:'name',value:profile.name||'',type:true},
-  {id:'validate-email',label:'Validating email format before submitting',detail:`→ matches RFC 5322 pattern · domain reachable`,dur:300},
-  {id:'type-email',label:'Filling in your email',detail:`Typing "${esc(profile.email||'')}" character by character`,dur:720,field:'email',value:profile.email||'',type:true},
-  {id:'skip-phone',label:'Detecting phone as optional · skipping it',detail:`→ left empty (you can fill it in manually later)`,dur:360},
-  {id:'pick-location',label:'Selecting your current location',detail:`→ "${esc(profile.destination||'Hong Kong')}" based on your destination preference`,dur:560,field:'location',value:profile.destination||'Hong Kong'},
-  {id:'pick-workauth',label:'Choosing your work-authorisation answer',detail:`→ "${esc(profile.status||'Not sure yet')}" from your saved profile`,dur:660,field:'workauth',value:profile.status||'Not sure yet'},
-  {id:'draft-cover',label:'Drafting a short cover letter tailored to this role',detail:`Using ${esc(jobTitle)} + your headline · kept under 1,500 chars`,dur:1450,field:'cover',value:`Hi Forma Studio team,\n\nI'm applying for the ${jobTitle} role because your cross-border setup matches the way I like to work — small teams, real ownership, and product decisions that travel with the user. My recent work as ${profile.headline||'a product builder'} has prepared me to contribute from day one.\n\nHappy to share work samples if useful.\n\n— ${firstName}`},
-  {id:'review-fields',label:'Reviewing accuracy of all 6 fields',detail:`Cross-checked against saved profile · no edits needed`,dur:540},
-  {id:'confirm-consent',label:'Confirming the consent checkbox',detail:`You stay in control — agent pauses here for your review`,dur:520,field:'consent',value:true},
-  {id:'queue',label:`Pushing the application to ${esc(j.company)}'s hiring queue`,detail:`Connecting to ${esc(j.company)}'s applicant tracking system`,dur:580},
-  {id:'submit',label:`Submitting the application on ${esc(j.company)}'s site`,detail:`Clicking Submit · you'll see confirmation next`,dur:780,action:'submit'}
+  {id:'name',label:'Name',value:profile.name||''},
+  {id:'email',label:'Email',value:profile.email||''},
+  {id:'workauth',label:'Work authorisation',value:profile.status||'Not sure yet'},
+  {id:'cover',label:'Introduction',value:`Hello ${j.company} team,\n\nI am interested in your ${title(j)} opportunity. My profile: ${profile.headline||'Please add your experience here'}. I would welcome a conversation about the role and the team.\n\n${profile.name||''}`}
  ];
 }
 function applyResetState(){
@@ -316,20 +330,19 @@ function applyResetState(){
 }
 function applyPortalPage(j){
  const profile=state.profile;
- const steps=agentStepsFor(j,profile);
  const already=state.applications.some(a=>a.jobId===j.id);
- const consentOptions=['Permission to work','Application in progress','Exploring','Not sure yet'];
+ const consentOptions=[...new Set(['Not sure yet',profile.status,'HK permanent resident / right to land','IANG','TTPS','ASMTP','QMAS','TechTAS','Dependant permission','Other permission','No current permission'].filter(Boolean))];
  return `<div class="apply-portal" data-feature-screen="agent">
   <header class="apply-portal-header">
    <button class="apply-back" data-apply-back aria-label="Back to Across">${icon('arrow')}<span>Back to Across</span></button>
-   <small>Applying on <strong>Forma Studio's</strong> careers portal</small>
-   <span class="apply-pill">EXTERNAL COMPANY SITE</span>
+   <small><strong>${esc(j.company)}</strong> · Local application demo</small>
+   <span class="apply-pill">SIMULATED PORTAL</span>
   </header>
   <section class="apply-portal-hero">
    <span class="apply-portal-logo" style="--logo-bg:${j.bg};--logo-ink:${j.ink}" aria-hidden="true">${j.initial}</span>
    <small class="eyebrow">HIRING ACROSS BORDERS</small>
    <h1>${esc(j.company)} careers</h1>
-   <p>A small studio shaping financial products from Hong Kong to Shenzhen. We move carefully, talk plainly and ship.</p>
+   <p>Build your next chapter with ${esc(j.company)}. Explore the role, understand the team’s expectations, and start a conversation.</p>
   </section>
   <section class="apply-role">
    <div class="apply-role-head">
@@ -347,55 +360,27 @@ function applyPortalPage(j){
    <header class="apply-form-head">
     <small class="eyebrow">FORM ON COMPANY SITE</small>
     <h2>Apply for this role</h2>
-    <p>Forma Studio reviews every application personally. Submit manually or let the AI agent fill the form on your behalf.</p>
+    <p>This fictional company portal runs inside Across. Ask the agent beside it to prepare the form, then review the details yourself.</p>
    </header>
-   <div class="apply-agent-card panel" data-agent-card>
-    <span class="agent-icon">${icon('route')}</span>
-    <div>
-     <strong>Run the AI agent</strong>
-     <small>The agent reads your saved profile, scans the portal, drafts a tailored cover letter, ticks consent and submits on your behalf — about 14 steps and ~9 seconds. You stay in control of consent and submit.</small>
-    </div>
-    <button class="btn btn-primary" data-apply-run-agent ${already?'disabled':''}>${icon('route')} Run AI Agent</button>
-   </div>
    <form id="apply-form" data-job-id="${esc(j.id)}" autocomplete="on">
     <div class="form-grid">
-     <label class="field">Your name<input name="name" required maxlength="80" value="${esc(profile.name||'')}"></label>
-     <label class="field">Email<input type="email" name="email" required maxlength="150" value="${esc(profile.email||'')}"></label>
+     <label class="field">Your name<input name="name" required maxlength="80" value=""></label>
+     <label class="field">Email<input type="email" name="email" required maxlength="150" value=""></label>
      <label class="field">Phone (optional)<input name="phone" type="tel" maxlength="40" placeholder="Not required — leave blank"></label>
      <label class="field">Current location<select name="location" required>
-      ${['Hong Kong','Shenzhen','Other'].map(o=>`<option ${profile.destination===o?'selected':''}>${o}</option>`).join('')}
+      <option value="">Choose current location</option>${['Hong Kong','Shenzhen','Other'].map(o=>`<option>${o}</option>`).join('')}
      </select></label>
      <label class="field full-width">Work authorisation<select name="workauth" required>
       ${consentOptions.map(o=>`<option ${(profile.status||'Not sure yet')===o?'selected':''}>${o}</option>`).join('')}
-     </select><small>Forma Studio uses this to plan sponsorship conversations. Confirming or selecting "Not sure yet" is fine.</small></label>
+     </select><small>Your self-reported status is copied exactly. Verify your permission and conditions before any real application.</small></label>
     </div>
     <label class="field full-width">Why are you interested in this role? (optional)<textarea name="cover" maxlength="1500" placeholder="A short note that helps the hiring team understand your fit."></textarea></label>
-    <label class="check-field"><input type="checkbox" name="consent" required><span>I confirm the information above is accurate and I consent to Forma Studio reviewing my application.</span></label>
+    <label class="check-field"><input type="checkbox" name="consent" required><span>I confirm the information above is accurate and I understand this only saves a local demo record. No employer receives it.</span></label>
     <div class="apply-actions">
-     <button type="submit" class="btn btn-primary" ${already?'disabled':''}>Submit application ${icon('arrow')}</button>
+     <button type="submit" class="btn btn-primary" ${already?'disabled':''}>${agent.tr('saveApplication')} ${icon('arrow')}</button>
      <button type="button" class="btn btn-outline" data-apply-back>Cancel</button>
     </div>
    </form>
-   <div class="agent-trace panel" data-agent-trace hidden>
-    <header class="agent-trace-head">
-     <span class="agent-icon">${icon('route')}</span>
-     <div>
-      <h3>AI Agent activity</h3>
-      <p>Live trace · Each step is a decision or action the agent makes on your behalf.</p>
-     </div>
-    </header>
-    <ol class="agent-trace-list">${steps.map(s=>{
-     const status=state.agentCompletedSteps.includes(s.id)?'done':state.agentStep===s.id?'active':'pending';
-     return `<li data-step="${s.id}" data-status="${status}">
-      <span class="agent-step-marker" aria-hidden="true"></span>
-      <span class="agent-step-body"><strong>${s.label}</strong><small>${s.detail}</small></span>
-     </li>`;
-    }).join('')}</ol>
-    <div class="agent-trace-actions">
-     <button class="text-btn" data-apply-cancel-agent>${icon('close')} Stop the agent</button>
-     <span>${icon('shield')} Agent runs locally · you stay in control of consent and submit</span>
-    </div>
-   </div>
   </section>
  </div>`;
 }
@@ -404,13 +389,13 @@ function applyPortalSuccess(j){
  return `<div class="apply-portal" data-feature-screen="agent">
   <header class="apply-portal-header">
    <button class="apply-back" data-apply-back aria-label="Back to Across">${icon('arrow')}<span>Back to Across</span></button>
-   <small>${esc(j.company)} · Application received</small>
+   <small>${esc(j.company)} · Demo record saved</small>
   </header>
   <div class="apply-success">
    <span class="success-icon">${icon('check')}</span>
-   <h2>Your application was submitted.</h2>
-   <p>Forma Studio received your application${success.date?` on <strong>${esc(success.date)}</strong>`:''}. They reply within five working days.</p>
-   ${success.agent?`<p class="apply-agent-badge">${icon('route')} Submitted with AI agent assistance · ${esc((state.agentCompletedSteps||[]).length)} steps taken</p>`:''}
+   <h2>Your demo application is saved.</h2>
+   <p>A local record was created${success.date?` on <strong>${esc(success.date)}</strong>`:''}. Nothing was sent to ${esc(j.company)}.</p>
+   ${success.agent?`<p class="apply-agent-badge">${icon('route')} Prepared with the scripted agent · ${esc((state.agentCompletedSteps||[]).length)} steps taken</p>`:''}
    <div class="apply-success-actions">
     <button class="btn btn-primary" data-modal-view="applications">View my applications ${icon('arrow')}</button>
     <button class="btn btn-outline" data-apply-back>Back to discover</button>
@@ -419,72 +404,29 @@ function applyPortalSuccess(j){
   </div>
  </div>`;
 }
-function applyRunAgent(){
- if(state.agentRunning||!state.applyTarget)return;
+let applyRunToken=0;
+function stopApplyAgent(){applyRunToken++;state.agentRunning=false;}
+async function applyRunAgent(){
+ if(state.agentRunning||!state.applyTarget||state.applySuccess)return;
  const j=jobs.find(x=>x.id===state.applyTarget);
  if(!j||state.applications.some(a=>a.jobId===j.id))return;
- state.agentRunning=true;
- state.applyAgentUsed=true;
- state.agentCompletedSteps=[];
- state.agentStep=null;
- const trace=document.querySelector('[data-agent-trace]');
- if(trace){trace.hidden=false;trace.scrollIntoView({behavior:'smooth',block:'start'})}
- const steps=agentStepsFor(j,state.profile);
- const sleep=ms=>new Promise(r=>setTimeout(r,ms));
- const updateUi=()=>{
-  document.querySelectorAll('[data-agent-trace] [data-step]').forEach(li=>{
-   const id=li.dataset.step;
-   if(state.agentCompletedSteps.includes(id))li.dataset.status='done';
-   else if(state.agentStep===id)li.dataset.status='active';
-   else li.dataset.status='pending';
-  });
-  const active=document.querySelector('[data-agent-trace] li[data-status="active"]');
-  if(active)active.scrollIntoView({behavior:'smooth',block:'nearest'});
- };
- async function applyToField(step){
-  const f=document.querySelector(`[name="${step.field}"]`);
-  if(!f)return;
-  if(step.field==='consent'){f.checked=!!step.value;f.dispatchEvent(new Event('change',{bubbles:true}));f.classList.add('agent-filled');return}
-  if(step.type){
-   // Type character by character so the demo viewer sees the agent actively fill the input
-   f.value='';f.classList.add('agent-filled');
-   for(let i=0;i<step.value.length;i++){
-    f.value=step.value.slice(0,i+1);
-    f.dispatchEvent(new Event('input',{bubbles:true}));
-    await sleep(22);
-   }
-   return;
-  }
-  f.value=step.value;f.classList.add('agent-filled');f.dispatchEvent(new Event('input',{bubbles:true}));
+ const token=++applyRunToken, form=document.querySelector('#apply-form');
+ if(!form)return;
+ state.agentRunning=true;state.applyAgentUsed=true;state.agentCompletedSteps=[];
+ agent.syncRail('apply');
+ for(const step of agentStepsFor(j,state.profile)){
+  if(token!==applyRunToken||!state.agentRunning||!form.isConnected)return;
+  const field=form.elements.namedItem(step.id);if(!field)continue;
+  field.value=step.value;field.classList.add('agent-filled');field.dispatchEvent(new Event('input',{bubbles:true}));
+  field.scrollIntoView({behavior:'smooth',block:'center'});
+  state.agentCompletedSteps.push(step.id);
+  await new Promise(resolve=>setTimeout(resolve,650));
  }
- (async()=>{
-  for(let i=0;i<steps.length;i++){
-   const step=steps[i];
-   if(!state.agentRunning)return;
-   state.agentStep=step.id;
-   updateUi();
-   if(step.field){await applyToField(step);await sleep(Math.max(60,(step.dur||400)-step.value.length*22))}
-   else{await sleep(step.dur||400)}
-   if(!state.agentRunning)return;
-   if(step.action==='submit'){
-    state.agentCompletedSteps.push(step.id);
-    updateUi();
-    await sleep(280);
-    if(!state.agentRunning)return;
-    state.agentStep=null;state.agentRunning=false;
-    const form=document.querySelector('#apply-form');
-    if(form)form.requestSubmit();
-    return;
-   }
-   state.agentCompletedSteps.push(step.id);
-   state.agentStep=null;
-   updateUi();
-  }
-  state.agentStep=null;state.agentRunning=false;updateUi();
- })();
+ if(token!==applyRunToken||!state.agentRunning||!form.isConnected)return;
+ state.agentRunning=false;agent.reply('apply','filled');
 }
 
-function applyPortalSuccessNow(j,agent){state.applySuccess={date:new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'Asia/Hong_Kong'}).format(new Date()),agent};state.agentRunning=false;state.agentStep=null;render()}
+
 
 function showJob(id){const j=jobs.find(x=>x.id===id);if(!j)return;const already=state.applications.some(a=>a.jobId===id);const p=postForMarketing(j,false);openDialog('A closer look',`${logo(j,true)}<h2 class="detail-title">${esc(title(j))}</h2><p class="detail-company">${j.company} · ${city(j.city)} · ${j.area}</p><div class="tag-row">${j.skills.map(s=>`<span class="tag mint">${s}</span>`).join('')}</div><div class="detail-meta"><div><small>Monthly base salary</small><strong>${j.salary}</strong></div><div><small>Work arrangement</small><strong>${j.mode} · Full-time</strong></div><div><small>Destination</small><strong>${city(j.city)}</strong></div><div><small>Employer support</small><strong>${j.sponsor?'Open to discussion':'Ask the employer'}</strong></div></div><div class="detail-section"><h3>A little about the opportunity</h3><p>${j.summary}</p></div><div class="detail-section"><h3>What you bring</h3><ul>${j.requirements.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="detail-section"><h3>The practical details</h3><ul>${j.benefits.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="notice">${icon('globe')} Moving across the border? Clarify work permission, language expectations and the full employment package. Sponsorship discussion does not guarantee permission. <a href="#resources" data-modal-view="resources">Open the cross-border guide</a>.</div><p class="language-note">Fictional opportunity for demo use. Salary is shown in the original currency, before deductions. No exchange-rate comparison is made.</p>${state.workspace==='employer'?marketingSectionHtml(p,state.lang):''}`,true,`<div class="detail-actions"><button class="btn btn-primary" data-apply="${id}" ${already?'disabled':''}>${already?'Demo application saved':'Apply on company site'}${icon(already?'check':'arrow')}</button><button class="btn btn-outline" data-save="${id}" aria-pressed="${state.saved.includes(id)}">${icon('bookmark')}${t(state.saved.includes(id)?'unsave':'save')}</button></div>`)}
 function applyDialog(id){const j=jobs.find(x=>x.id===id);if(!j)return;openDialog('Your next step',`<div style="display:flex;gap:14px;align-items:center">${logo(j)}<div><h3>${esc(title(j))}</h3><p class="muted small" style="margin-top:4px">${j.company} · ${city(j.city)}</p></div></div><form id="application-form" data-job-id="${id}"><div class="notice">Try the application experience. Nothing will be sent, and no real CV is required.</div><div class="form-grid"><label class="field full-width">Your profile<input value="${esc(state.profile.name)} · ${esc(state.profile.headline)}" readonly></label><label class="field full-width">A short introduction (optional)<textarea name="note" maxlength="1500" placeholder="What interests you about this opportunity?"></textarea></label></div><label class="check-field"><input type="checkbox" required><span>I understand this is a demo application stored only in this browser. No employer will receive it.</span></label><button type="submit" class="btn btn-primary full">Save demo application ${icon('arrow')}</button></form>`)}
@@ -494,16 +436,16 @@ function marketingDialog(selectedId){
  openDialog('Employer marketing',`<p class="muted small">Choose an opportunity, then edit its copy for each channel and language. Nothing is published.</p><label class="field" style="margin-top:20px">Opportunity<select data-marketing-job>${posts.map(p=>`<option value="${esc(p.id)}" ${p.id===selected.id?'selected':''}>${esc(p.title)}${p.isDraft?' · Local draft':''}</option>`).join('')}</select></label>${marketingSectionHtml(selected,state.lang)}`,true);
 }
 function applicationAgentDialog(){
- openDialog('Job application agent',`<p class="muted small">Choose a fictional role to open its simulated application form, then select Run AI Agent. Nothing is sent to an employer.</p><div style="margin-top:20px">${jobs.map(j=>{const applied=state.applications.some(a=>a.jobId===j.id);return `<button class="btn btn-outline full" style="margin-bottom:12px" data-apply="${j.id}" ${applied?'disabled':''}>${applied?'Demo application saved:':'Prepare application:'} ${esc(title(j))} · ${esc(j.company)} ${icon('arrow')}</button>`}).join('')}</div>`);
+ openDialog('Job application agent',`<p class="muted small">Choose a fictional role to open its simulated application form, then chat with the agent beside it. Nothing is sent to an employer.</p><div style="margin-top:20px">${jobs.map(j=>{const applied=state.applications.some(a=>a.jobId===j.id);return `<button class="btn btn-outline full" style="margin-bottom:12px" data-apply="${j.id}" ${applied?'disabled':''}>${applied?'Demo application saved:':'Prepare application:'} ${esc(title(j))} · ${esc(j.company)} ${icon('arrow')}</button>`}).join('')}</div>`);
 }
-function featureDialog(id){if(id==='cv'||id==='profile'){career.open(id==='cv'?'cv':'talent-profile');return}if(id==='marketing'){marketingDialog();return}if(id==='agent'){applicationAgentDialog();return}const f=features.find(x=>x.id===id);if(!f)return;openDialog(f.name,`<span class="feature-icon" style="display:inline-flex">${icon(f.icon)}</span><h2 style="font-size:24px;margin-top:22px">${f.sub}</h2><p style="font-size:12px;line-height:1.9;color:#8a997b;margin-top:13px">${f.body}</p><ul class="credentials">${f.steps.map((x,i)=>`<li><span class="avatar" style="width:26px;height:26px;font-size:10px;background:#eef3e8">0${i+1}</span><strong>${x}</strong></li>`).join('')}</ul><div class="notice">Planned for a later phase. This screen explains the concept; the feature is not implemented in this prototype.</div><button class="btn btn-outline full" data-action="close-modal" style="margin-top:22px">Got it ${icon('check')}</button>`)}
+function featureDialog(id){if(id==='cv'){navigate('cv-demo');return}if(id==='profile'){career.open('talent-profile');return}if(id==='marketing'){navigate('marketing');return}if(id==='agent'){applicationAgentDialog();return}const f=features.find(x=>x.id===id);if(!f)return;openDialog(f.name,`<span class="feature-icon" style="display:inline-flex">${icon(f.icon)}</span><h2 style="font-size:24px;margin-top:22px">${f.sub}</h2><p style="font-size:12px;line-height:1.9;color:#8a997b;margin-top:13px">${f.body}</p><ul class="credentials">${f.steps.map((x,i)=>`<li><span class="avatar" style="width:26px;height:26px;font-size:10px;background:#eef3e8">0${i+1}</span><strong>${x}</strong></li>`).join('')}</ul><div class="notice">Planned for a later phase. This screen explains the concept; the feature is not implemented in this prototype.</div><button class="btn btn-outline full" data-action="close-modal" style="margin-top:22px">Got it ${icon('check')}</button>`)}
 function newVacancy(){openDialog('Create a demo opportunity',`<form id="vacancy-form"><p class="muted small" style="line-height:1.8">Build a local draft for either market. No listing is published.</p><div class="form-grid"><label class="field full-width">Job title<input name="title" required maxlength="100" placeholder="e.g. Senior Product Designer"></label><label class="field">Destination<select name="city"><option>Hong Kong</option><option>Shenzhen</option></select></label><label class="field">Work arrangement<select name="mode"><option>Hybrid</option><option>On-site</option><option>Remote</option></select></label><label class="field full-width">Monthly base salary, with currency<input name="salary" required maxlength="80" placeholder="e.g. HK$35,000–45,000"></label><label class="field full-width">About the opportunity<textarea name="summary" required maxlength="2500" placeholder="Responsibilities, expectations and what your team offers"></textarea></label></div><button class="btn btn-primary full" type="submit" style="margin-top:24px">Save local draft ${icon('check')}</button></form>`)}
 function toggleSave(id){if(!jobs.some(j=>j.id===id))return;const existed=state.saved.includes(id);state.saved=existed?state.saved.filter(x=>x!==id):[...state.saved,id];const saved=persist();render();if(modal.open&&modal.classList.contains('drawer'))showJob(id);if(saved)toast(existed?'Removed from your saved jobs':'Saved for your next chapter')}
 document.addEventListener('click',e=>{
  const mk=e.target.closest('[data-marketing-lang],[data-marketing-copy],[data-marketing-reset],[data-marketing-reset-all],[data-apply-run-agent],[data-apply-cancel-agent],[data-apply-back]');
  if(mk){
   if(mk.dataset.applyRunAgent!==undefined){applyRunAgent();return}
-  if(mk.dataset.applyCancelAgent!==undefined){state.agentRunning=false;toast('Agent stopped');return}
+  if(mk.dataset.applyCancelAgent!==undefined){stopApplyAgent();toast('Agent stopped');return}
   if(mk.dataset.applyBack!==undefined){applyResetState();navigate('discover');return}
   const section=mk.closest('.marketing-section');
   if(section){
@@ -528,7 +470,7 @@ document.addEventListener('click',e=>{
  if(button.dataset.job){showJob(button.dataset.job);return}
  if(button.dataset.city){state.city=button.dataset.city;state.expanded=false;render();return}
  if(button.dataset.feature){featureDialog(button.dataset.feature);return}
- if(button.dataset.apply){state.applyTarget=button.dataset.apply;state.applySuccess=null;applyResetState();if(modal.open)modal.close();navigate('apply');return}
+ if(button.dataset.apply){stopApplyAgent();agent.resetApply();state.applyTarget=button.dataset.apply;state.applySuccess=null;applyResetState();if(modal.open)modal.close();navigate('apply');return}
  if(button.dataset.draft){const d=state.vacancies.find(x=>x.id===button.dataset.draft);if(d){const p=postForMarketing(d,true);openDialog('Local draft preview',`<span class="tag">Unpublished demo draft</span><h2 style="margin-top:19px">${esc(d.title)}</h2><p class="muted small" style="margin-top:12px">${esc(d.city)} · ${esc(d.mode)} · ${esc(d.salary)}</p><p style="font-size:12px;line-height:1.9;white-space:pre-wrap;margin-top:22px">${esc(d.summary)}</p>${marketingSectionHtml(p,state.lang)}`);}return}
  switch(button.dataset.action){
   case 'switch-workspace':state.workspace=state.workspace==='candidate'?'employer':'candidate';navigate(state.workspace==='employer'?'employer':'discover');break;
@@ -546,6 +488,7 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('change',e=>{
  if(e.target.matches('[data-marketing-job]')){marketingDialog(e.target.value);return}
+ if(e.target.matches('[data-marketing-workspace-job]')){state.marketingTarget=e.target.value;render();return}
  if(e.target.id==='language'){state.lang=e.target.value;persist();render()}
  if(e.target.id==='discipline'){state.discipline=e.target.value;render()}
  if(e.target.id==='work-mode'){state.mode=e.target.value;render()}
@@ -601,13 +544,18 @@ document.addEventListener('submit',e=>{
   const saved=persist();
   state.applySuccess={date:today,agent:!!state.applyAgentUsed};
   state.agentRunning=false;state.agentStep=null;
-  render();
-  if(saved)toast(state.applySuccess.agent?'Application submitted with AI agent assistance':'Application submitted');
+  render();agent.reply('apply','saved');
+  if(saved)toast('Demo application saved. Nothing was sent to an employer.');
   return;
  }
 });
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();if(modal.open)modal.close();if(!['discover','saved'].includes(state.view))navigate('discover');document.querySelector('#job-search')?.focus()}if(e.key==='Escape'){document.querySelector('.sidebar')?.classList.remove('open');document.querySelector('.mobile-scrim')?.classList.remove('open');document.querySelector('.mobile-menu')?.setAttribute('aria-expanded','false')}});
 modal.addEventListener('click',e=>{if(e.target===modal){const r=modal.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)modal.close()}});
+const agent=createAgentDemo({getApplicationStatus:()=>({running:state.agentRunning,saved:!!state.applySuccess}),getLanguage:()=>state.lang,getCandidate:()=>state.profile,getJob:()=>jobs.find(j=>j.id===(state.view==='marketing'?state.marketingTarget:state.applyTarget))||state.vacancies.find(j=>j.id===state.marketingTarget),refresh:render,onStop:stopApplyAgent,onFill:applyRunAgent,onPreview:language=>career.setPreviewLanguage(language),onMarketing:channel=>{
+ const card=document.querySelector(`.marketing-card[data-channel="${channel}"]`);
+ document.querySelectorAll('.marketing-card').forEach(c=>c.classList.toggle('agent-selected',c===card));
+ card?.scrollIntoView({behavior:'smooth',block:'center'});
+}});
 const career=createCareerWorkspace({navigate,refresh:render,getView:()=>state.view,getCandidate:()=>state.profile,getLanguage:()=>state.lang,getJobTitle:title,jobs,toast,closeModal:()=>{if(modal.open)modal.close()}});
 function routeHash(){const hash=location.hash.slice(1);if(hash.startsWith('profile=')){career.openShared(hash.slice(8));return}if(['cv','talent-profile'].includes(hash)){career.open(hash);return}if(hash!=='main')navigate(hash||'discover')}
 window.addEventListener('hashchange',routeHash);
